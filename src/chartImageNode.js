@@ -3,7 +3,7 @@ const dataLabels = require('chartjs-plugin-datalabels');
 
 module.exports = function (RED) {
 	function chartImageNode(config) {
-		RED.nodes.creatNode(this, config);
+		RED.nodes.createNode(this, config);
 		const chartCallback = (ChartJS) => {
 			ChartJS.pluginService.register({
 		        beforeDraw: function (chart, easing) {
@@ -20,8 +20,8 @@ module.exports = function (RED) {
 		};
 		var node = this;
 		this.on('input', (msg, send, done) => {
-			this.width = msg.width || config.width;
-			this.height = msg.height || config.height;
+			this.width = Number(msg.width) || config.width;
+			this.height = Number(msg.height) || config.height;
 			send = send || function () {
 				node.send.apply(node, arguments);
 			};
@@ -33,25 +33,27 @@ module.exports = function (RED) {
 				}
 			};
 			const canvas = new CanvasRenderService(this.width,this.height,chartCallback);
-			if (msg.payload) {
+			if (!(msg.payload && Object.prototype.hasOwnProperty.call(msg.payload, 'type'))) {
+				this.errorHandler('msg.payload is not a proper chart.js object', msg);
+			} else {
 				try {
-					var chart = JSON.parse(msg.payload);
+					var chart = msg.payload;
 					(async (chartConfig) => {
 						const image = await canvas.renderToBuffer(chartConfig);
 						msg.payload = image;
-						node.send(msg);
-					})(msg.payload);
+						send(msg);
+					})(chart);
 					if (done) {
 						done();
 					}
 				} catch (e) {
 					this.errorHandler(e, msg);
-			} else {
-				if (done) {
-					done();
 				}
 			}
-		})
+			if (done) {
+				done();
+			}
+		});
 	}
 	RED.nodes.registerType('chart-image', chartImageNode);
 };

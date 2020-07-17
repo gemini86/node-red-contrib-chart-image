@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('chart-image',{
         category: 'function',
-        color: '#6ce65c',
+        color: '#81e3c9',
         defaults: {
             name: {value:''},
 			width: {value: 500},
@@ -9,7 +9,7 @@
         },
         inputs:1,
         outputs:1,
-        icon: 'function.svg',
+        icon: 'font-awesome/fa-bar-chart-o',
         label: function() {
             return this.name || 'chart-image';
         },
@@ -44,5 +44,12 @@
 </script>
 
 <script type="text/html" data-help-name="chart-image">
-    <h1>under construction</h1>
+    <p>Generate a chart in image form using Chart.js</p>
+	<h3>Details:</h3>
+	<p>A chart image buffer will be generated using the chart.js definition object found in <code>msg.payload</code>. See the chart.js documentation for more info on defining a chart.</p>
+	<p>Setting <code>msg.width</code> and/or <code>msg.height</code> to the desired size in pixels will override the node configuration. </p>
+	<h3>Resources</h3>
+	<a href="https://www.chartjs.org/docs/latest/">Chart.js documentation</a><br>
+	<a href="https://www.npmjs.com/package/chartjs-node-canvas">charjs-code-canvas documentation</a><br>
+	<a href="https://chartjs-plugin-datalabels.netlify.app/guide/">chartjs-plugin-datalabels documentation</a>
 </script>
