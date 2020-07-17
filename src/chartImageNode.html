@@ -1,0 +1,48 @@
+<script type="text/javascript">
+    RED.nodes.registerType('chart-image',{
+        category: 'function',
+        color: '#6ce65c',
+        defaults: {
+            name: {value:''},
+			width: {value: 500},
+			height: {value: 300}
+        },
+        inputs:1,
+        outputs:1,
+        icon: 'function.svg',
+        label: function() {
+            return this.name || 'chart-image';
+        },
+        labelStyle: function() {
+            return this.name?'node_label_italic':'';
+        },
+        oneditsave: function() {
+            if (this.width === undefined) {
+                $("#node-input-width").val(500);
+            }
+			if (this.height === undefined) {
+                $("#node-input-width").val(300);
+            }
+        }
+    });
+
+</script>
+
+<script type="text/html" data-template-name="chart-image">
+    <div class="form-row">
+        <label for="node-input-width" style="width:120px;"><i class="fa fa-arrows-h"></i> Chart Width</label>
+        <input type="number" id="node-input-width" placeholder="500" style="width:70%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-height" style="width:120px;"><i class="fa fa-arrows-v"></i> Chart Height</label>
+        <input type="number" id="node-input-height" placeholder="300" style="width:70%;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name" style="width:120px;"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="chart-image">
+    <h1>under construction</h1>
+</script>
