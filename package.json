@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-chart-image",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use chartjs to generate charts and output them as image buffers.",
   "main": "",
   "node-red": {

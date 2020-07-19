@@ -4,24 +4,35 @@ const dataLabels = require('chartjs-plugin-datalabels');
 module.exports = function (RED) {
 	function chartImageNode(config) {
 		RED.nodes.createNode(this, config);
-		const chartCallback = (ChartJS) => {
-			ChartJS.pluginService.register({
-		        beforeDraw: function (chart, easing) {
-		            if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-		                var ctx = chart.chart.ctx;
-		                var chartArea = chart.chartArea;
-		                ctx.save();
-		                ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-		                ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-		                ctx.restore();
-		            }
-		        }
-		    });
-		};
 		var node = this;
 		this.on('input', (msg, send, done) => {
-			this.width = Number(msg.width) || config.width;
-			this.height = Number(msg.height) || config.height;
+			const chartCallback = (ChartJS) => {
+				ChartJS.pluginService.register({
+			        beforeDraw: function (chart, easing) {
+			            if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+			                var ctx = chart.chart.ctx;
+			                var chartArea = chart.chartArea;
+			                ctx.save();
+			                ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+			                ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+			                ctx.restore();
+			            }
+			        }
+			    });
+				if (msg.payload.options.plugins.datalabels.display) {
+					ChartJS.pluginService.register(dataLabels);
+				} else ChartJS.pluginService.unregister(dataLabels);
+			};
+			if (msg.width) {
+				this.width = Number(msg.width);
+			} else {
+				this.width = Number(config.width);
+			}
+			if (msg.height) {
+				this.height = Number(msg.height);
+			} else {
+				this.height = Number(config.height);
+			}
 			send = send || function () {
 				node.send.apply(node, arguments);
 			};
