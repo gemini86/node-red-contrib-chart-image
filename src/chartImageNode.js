@@ -1,5 +1,5 @@
 const { CanvasRenderService } = require('chartjs-node-canvas');
-const dataLabels = require('chartjs-plugin-datalabels');
+const DataLabels = require('chartjs-plugin-datalabels');
 
 module.exports = function (RED) {
 	function chartImageNode(config) {
@@ -19,9 +19,10 @@ module.exports = function (RED) {
 			            }
 			        }
 			    });
-				if (msg.payload.options.plugins.datalabels.display) {
-					ChartJS.pluginService.register(dataLabels);
-				} else ChartJS.pluginService.unregister(dataLabels);
+				var diplayDatalabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
+				if (diplayDatalabels) {
+					ChartJS.plugins.register(DataLabels);
+				} else ChartJS.plugins.unregister(DataLabels);
 			};
 			if (msg.width) {
 				this.width = Number(msg.width);
