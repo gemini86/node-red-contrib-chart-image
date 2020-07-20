@@ -2,6 +2,7 @@
   "name": "node-red-contrib-chart-image",
   "version": "0.1.2",
   "description": "Use chartjs to generate charts and output them as image buffers.",
+  "repository": "https://github.com/gemini86/node-red-contrib-chart-image",
   "main": "",
   "node-red": {
     "nodes": {
@@ -11,9 +12,9 @@
   "keywords": [
     "node-red",
     "chart",
-	"chartjs",
-	"image",
-	"report"
+    "chartjs",
+    "image",
+    "report"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,7 +23,6 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "chart.js": "^2.7.3",
-    "chartjs": "^0.3.24",
     "chartjs-node-canvas": "^3.0.6",
     "chartjs-plugin-datalabels": "^0.7.0"
   },

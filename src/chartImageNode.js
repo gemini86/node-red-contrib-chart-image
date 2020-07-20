@@ -20,8 +20,8 @@ module.exports = function (RED) {
 			        }
 			    });
 				if (msg.payload.options.plugins.datalabels.display) {
-					ChartJS.pluginService.register(dataLabels);
-				} else ChartJS.pluginService.unregister(dataLabels);
+					ChartJS.plugins.register(dataLabels);
+				} else ChartJS.plugins.unregister(dataLabels);
 			};
 			if (msg.width) {
 				this.width = Number(msg.width);
