@@ -8,17 +8,17 @@ module.exports = function (RED) {
 		this.on('input', (msg, send, done) => {
 			const chartCallback = (ChartJS) => {
 				ChartJS.pluginService.register({
-			        beforeDraw: function (chart, easing) {
-			            if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-			                var ctx = chart.chart.ctx;
-			                var chartArea = chart.chartArea;
-			                ctx.save();
-			                ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-			                ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-			                ctx.restore();
-			            }
-			        }
-			    });
+					beforeDraw: function (chart) {
+						if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+							var ctx = chart.chart.ctx;
+							var chartArea = chart.chartArea;
+							ctx.save();
+							ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+							ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+							ctx.restore();
+						}
+					}
+				});
 				var diplayDatalabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
 				if (diplayDatalabels) {
 					ChartJS.plugins.register(DataLabels);
@@ -45,7 +45,7 @@ module.exports = function (RED) {
 				}
 			};
 			const canvas = new CanvasRenderService(this.width,this.height,chartCallback);
-			if (!(msg.payload && Object.prototype.hasOwnProperty.call(msg.payload, 'type'))) {
+			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined) {
 				this.errorHandler('msg.payload is not a proper chart.js object', msg);
 			} else {
 				try {
