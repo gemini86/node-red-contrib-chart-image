@@ -19,8 +19,14 @@ module.exports = function (RED) {
 						}
 					}
 				});
-				var diplayDatalabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
-				if (diplayDatalabels) {
+				var displayDataLabels;
+				try {
+					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
+				} catch (e){
+					node.warn('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
+					displayDataLabels = false;
+				}
+				if (displayDataLabels) {
 					ChartJS.plugins.register(DataLabels);
 				} else ChartJS.plugins.unregister(DataLabels);
 			};
@@ -45,7 +51,7 @@ module.exports = function (RED) {
 				}
 			};
 			const canvas = new CanvasRenderService(this.width,this.height,chartCallback);
-			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined) {
+			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
 				this.errorHandler('msg.payload is not a proper chart.js object', msg);
 			} else {
 				try {
