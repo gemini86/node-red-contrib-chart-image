@@ -24,6 +24,7 @@
   "dependencies": {
     "chart.js": "2.7.3",
     "chartjs-node-canvas": "^3.0.6",
+    "chartjs-plugin-annotation": "^0.5.7",
     "chartjs-plugin-datalabels": "^0.7.0"
   },
   "devDependencies": {
