@@ -23,7 +23,7 @@ module.exports = function (RED) {
 				try {
 					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
 				} catch (e){
-					node.warn('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
+					node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
 					displayDataLabels = false;
 				}
 				if (displayDataLabels) {
