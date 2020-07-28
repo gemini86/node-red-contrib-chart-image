@@ -32,30 +32,6 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		var node = this;
 		this.on('input', (msg, send, done) => {
-			const chartCallback = (ChartJS) => {
-				ChartJS.pluginService.register({
-					beforeDraw: function (chart) {
-						if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-							var ctx = chart.chart.ctx;
-							var chartArea = chart.chartArea;
-							ctx.save();
-							ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-							ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-							ctx.restore();
-						}
-					}
-				});
-				var displayDataLabels;
-				try {
-					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
-				} catch (e){
-					node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
-					displayDataLabels = false;
-				}
-				if (displayDataLabels) {
-					ChartJS.plugins.register(DataLabels);
-				} else ChartJS.plugins.unregister(DataLabels);
-			};
 			if (msg.width) {
 				this.width = Number(msg.width);
 			} else {
@@ -75,6 +51,37 @@ module.exports = function (RED) {
 				} else {
 					node.error(e, msg);
 				}
+			};
+			const chartCallback = (ChartJS) => {
+				ChartJS.pluginService.register({
+					beforeDraw: function (chart) {
+						if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+							var ctx = chart.chart.ctx;
+							var chartArea = chart.chartArea;
+							ctx.save();
+							ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+							ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+							ctx.restore();
+						}
+					}
+				});
+				if (msg.plugins) {
+					let pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
+					pluginsToAdd.forEach(plugin => {
+						node.log(plugin + ' has been registered to chart plugins');
+						ChartJS.plugins.register(msg.plugins[plugin]);
+					});
+				}
+				var displayDataLabels;
+				try {
+					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
+				} catch (e){
+					node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
+					displayDataLabels = false;
+				}
+				if (displayDataLabels) {
+					ChartJS.plugins.register(DataLabels);
+				} else ChartJS.plugins.unregister(DataLabels);
 			};
 			const canvas = new CanvasRenderService(this.width,this.height,chartCallback);
 			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
