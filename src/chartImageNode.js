@@ -91,7 +91,7 @@ module.exports = function (RED) {
 					if (msg.payload.data.datasets[0]) {
 						msg.payload.data.datasets.forEach((e,i) => {
 							if (!('backgroundColor' in e)) {
-								e.backgroundColor = toOpacity(pallet[i],0.5);
+								e.backgroundColor = toOpacity(pallet[i],0.9);
 							}
 							if (!('borderColor' in e)) {
 								e.borderColor = pallet[i];
