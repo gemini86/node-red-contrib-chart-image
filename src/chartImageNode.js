@@ -91,10 +91,10 @@ module.exports = function (RED) {
 					if (msg.payload.data.datasets[0]) {
 						msg.payload.data.datasets.forEach((e,i) => {
 							if (!('backgroundColor' in e)) {
-								e.backgroundColor = pallet[i];
+								e.backgroundColor = toOpacity(pallet[i],0.5);
 							}
 							if (!('borderColor' in e)) {
-								e.borderColor = toOpacity(pallet[i],0.5);
+								e.borderColor = pallet[i];
 							}
 						});
 					}
