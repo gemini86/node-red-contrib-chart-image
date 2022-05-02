@@ -84,10 +84,10 @@ module.exports = function (RED) {
 				} else ChartJS.plugins.unregister(DataLabels);
 			};
 			const canvasOptions = {
-				"width": this.width,
-				"height": this.height,
-				"chartCallback": chartCallback,
-			}
+				'width': this.width,
+				'height': this.height,
+				'chartCallback': chartCallback,
+			};
 			const canvas = new ChartJSNodeCanvas(canvasOptions);
 			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
 				this.errorHandler('msg.payload is not a proper chart.js object', msg);
