@@ -1,4 +1,4 @@
-const { CanvasRenderService } = require('chartjs-node-canvas');
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const DataLabels = require('chartjs-plugin-datalabels');
 const Annotation = require('chartjs-plugin-annotation'); //eslint-disable-line no-unused-vars
 const pallet = [
@@ -83,7 +83,12 @@ module.exports = function (RED) {
 					ChartJS.plugins.register(DataLabels);
 				} else ChartJS.plugins.unregister(DataLabels);
 			};
-			const canvas = new CanvasRenderService(this.width,this.height,chartCallback);
+			const canvasOptions = {
+				"width": this.width,
+				"height": this.height,
+				"chartCallback": chartCallback,
+			}
+			const canvas = new ChartJSNodeCanvas(canvasOptions);
 			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
 				this.errorHandler('msg.payload is not a proper chart.js object', msg);
 			} else {
