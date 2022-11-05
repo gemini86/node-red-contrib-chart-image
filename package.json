@@ -22,14 +22,14 @@
   "author": "gemini86",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "chart.js": "2.9.4",
-    "chartjs-node-canvas": "^3.0.6",
+    "chart.js": "^2.7.3",
+    "chartjs-node-canvas": "^3.2.0",
     "chartjs-plugin-annotation": "^0.5.7",
     "chartjs-plugin-annotations": "^0.6.1",
     "chartjs-plugin-datalabels": "^0.7.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-html": "^6.0.0"
+    "eslint-plugin-html": "^7.1.0"
   }
 }
