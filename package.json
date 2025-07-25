@@ -22,11 +22,10 @@
   "author": "gemini86",
   "license": "BSD-2-Clause",
   "dependencies": {
+    "canvas": "^2.11.2",
     "chart.js": "^3.9.1",
     "chartjs-node-canvas": "^4.1.6",
-    "canvas": "^2.11.2",
     "chartjs-plugin-annotation": "^1.4.0",
-    "chartjs-plugin-annotations": "^0.6.1",
     "chartjs-plugin-datalabels": "^2.2.0"
   },
   "devDependencies": {

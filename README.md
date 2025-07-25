@@ -11,53 +11,80 @@ Setting `msg.width` and/or `msg.height` to the desired size in pixels will overr
 If no `backgroundColor` or `borderColor` is defined for a dataset, Chartjs assigns the global default color of `rgba(0,0,0,0.1)`. To make life a little easier, this node changes that behavior to assign each dataset a color from preset pallet, which includes 32 colors. If you define your own colors in a dataset, that color will be used, you do have to define both `backgroundColor` and `borderColor` if both are to be displayed. for line charts, use `fill:false` to prevent the use of `backgroundColor`.
 
 #### Plugins:
-This node includes `chartjs-plugin-datalabels` and `chartjs-plugin-annotations`. Each can be defined as you would according to their documentation. You can also define the chart background color by defining a `chartArea` object under the options scope.
+`chartjs-plugin-datalabels` and `chartjs-plugin-annotation` are included with this node. Starting with Chart.js&nbsp;v3 plugins must be registered with `Chart.register`. This node handles registration automatically when you include plugin options in `options.plugins`.
+If you previously used `chartjs-plugin-annotations`, the old `plugins.annotations` array will still work but is migrated to the new `annotation` plugin format internally.
+See the [datalabels migration guide](https://chartjs-plugin-datalabels.netlify.app/guide/migration.html) and the [annotation migration guide](https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/migrationV3.html) for details.
+
+Example datalabel configuration:
 
 ````javascript
-chartArea: {
-    backgroundColor: 'white'
-}
-````
-
- - NOTE: chartjs-plugin-datalabels registers itself automatically when imported. This node looks for a `display:true` object in the datalabels definition to register or unregistert the plugin. This prevents datalabels showing up aninvited.
-
-eg:
-
- ````javascript
 msg.payload = {
     options: {
-           plugins: {
-               datalabels: {
-                   display:true
-               }
-           }
-       }
+        plugins: {
+            datalabels: { display: true }
+        }
+    }
 }
 ````
-Additional plugins can be used by installing the desired plugin in the Node-RED install directory and following the settings.js example to import the module into your Node-RED instance.
+
+Example annotation configuration:
 
 ````javascript
-functionGlobalContext: {
-        // os:require('os'),
-        // jfive:require("johnny-five"),
-        // j5board:require("johnny-five").Board({repl:false}),
-		myMuchNeededPlugin: require('chartjs-plugin-yourplugin')
+msg.payload = {
+    options: {
+        plugins: {
+            annotation: {
+                annotations: [
+                    {
+                        type: 'line',
+                        scaleID: 'y-axis-0',
+                        value: 80,
+                        borderColor: 'red'
+                    }
+                ]
+            }
+        }
+    }
+}
+````
+
+Example line chart:
+
+````javascript
+msg.payload = {
+    type: 'line',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar'],
+        datasets: [{
+            label: 'Values',
+            data: [1, 2, 3]
+        }]
     },
+    options: {
+        plugins: {
+            datalabels: { display: true },
+            annotation: {
+                annotations: [{
+                    type: 'line',
+                    scaleID: 'y',
+                    value: 2,
+                    borderColor: 'blue'
+                }]
+            }
+        }
+    }
+}
 ````
-From there, you can pass it to your chart vie `msg.plugins`.
 
-````javascript
-msg.plugins = {
-    myMuchNeededPlugin: global.get('myMuchNeededPlugin')
-};
-````
-Then you just need to define the plugin options in your chart definition object.
+Legacy `plugins.annotations` arrays will still work. Additional plugins can be supplied via `msg.plugins` and configured in `options.plugins`.
 
 #### Resources
 - [Chart.js documentation](https://www.chartjs.org/docs/latest/)
 - [charjs-code-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
 - [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
-- [chartjs-plugin-annotations](https://github.com/chartjs/chartjs-plugin-annotation#readme)
+- [chartjs-plugin-annotation documentation](https://github.com/chartjs/chartjs-plugin-annotation#readme)
+- [datalabels migration guide](https://chartjs-plugin-datalabels.netlify.app/guide/migration.html)
+- [annotation migration guide](https://www.chartjs.org/chartjs-plugin-annotation/latest/guide/migrationV3.html)
 
 #### Verify Canvas on Node.js 20
 After installing dependencies, run:

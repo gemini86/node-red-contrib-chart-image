@@ -1,6 +1,6 @@
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const DataLabels = require('chartjs-plugin-datalabels');
-const Annotation = require('chartjs-plugin-annotation'); //eslint-disable-line no-unused-vars
+const Annotation = require('chartjs-plugin-annotation');
 const pallet = [
 	'rgba(51,102,204,1)', 'rgba(220,57,18,1)', 'rgba(255,153,0,1)', 'rgba(16,150,24,1)', 'rgba(153,0,153,1)',
 	'rgba(0,153,198,1)', 'rgba(221,68,119,1)', 'rgba(102,170,0,1)', 'rgba(184,46,46,1)', 'rgba(49,99,149,1)',
@@ -52,37 +52,57 @@ module.exports = function (RED) {
 					node.error(e, msg);
 				}
 			};
-			const chartCallback = (ChartJS) => {
-				ChartJS.pluginService.register({
-					beforeDraw: function (chart) {
-						if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-							var ctx = chart.chart.ctx;
-							var chartArea = chart.chartArea;
-							ctx.save();
-							ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-							ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-							ctx.restore();
-						}
-					}
-				});
-				if (msg.plugins) {
-					let pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
-					pluginsToAdd.forEach(plugin => {
-						node.log(plugin + ' has been registered to chart plugins');
-						ChartJS.plugins.register(msg.plugins[plugin]);
-					});
-				}
-				var displayDataLabels;
+                        const chartCallback = (ChartJS) => {
+                                ChartJS.register({
+                                        id: 'chartAreaBg',
+                                        beforeDraw: function (chart) {
+                                                if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+                                                        var ctx = chart.canvas.getContext('2d');
+                                                        var chartArea = chart.chartArea;
+                                                        ctx.save();
+                                                        ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+                                                        ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+                                                        ctx.restore();
+                                                }
+                                        }
+                                });
+
+                                if (msg.plugins) {
+                                        let pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
+                                        pluginsToAdd.forEach(plugin => {
+                                                node.log(plugin + ' has been registered to chart plugins');
+                                                ChartJS.register(msg.plugins[plugin]);
+                                        });
+                                }
+
+                                var annotationOptions;
+                                try {
+                                        annotationOptions = RED.util.getObjectProperty(msg, 'payload.options.plugins.annotation');
+                                } catch (e) {
+                                        annotationOptions = undefined;
+                                }
+                                const legacyAnnotations = RED.util.getObjectProperty(msg, 'payload.options.plugins.annotations');
+                                if (legacyAnnotations) {
+                                        if (!annotationOptions) { annotationOptions = {}; }
+                                        annotationOptions.annotations = legacyAnnotations;
+                                        RED.util.setObjectProperty(msg, 'payload.options.plugins.annotation', annotationOptions);
+                                        delete msg.payload.options.plugins.annotations;
+                                }
+                                if (annotationOptions) {
+                                        ChartJS.register(Annotation);
+                                }
+
+                                var displayDataLabels;
 				try {
 					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
 				} catch (e){
 					node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
 					displayDataLabels = false;
 				}
-				if (displayDataLabels) {
-					ChartJS.plugins.register(DataLabels);
-				} else ChartJS.plugins.unregister(DataLabels);
-			};
+                                if (displayDataLabels) {
+                                        ChartJS.register(DataLabels);
+                                } else ChartJS.unregister(DataLabels);
+                        };
 			const canvasOptions = {
 				'width': this.width,
 				'height': this.height,
