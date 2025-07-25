@@ -59,6 +59,14 @@ Then you just need to define the plugin options in your chart definition object.
 - [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
 - [chartjs-plugin-annotations](https://github.com/chartjs/chartjs-plugin-annotation#readme)
 
+#### Verify Canvas on Node.js 20
+After installing dependencies, run:
+
+```
+node test/test-canvas.js
+```
+to check that the `canvas` library works.
+
 #### Please report bugs, suggest improvements!
 https://github.com/gemini86/node-red-contrib-chart-image/issues
 
