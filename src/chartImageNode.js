@@ -28,98 +28,97 @@ function toOpacity(color,aValue) {
 }
 
 module.exports = function (RED) {
-	function chartImageNode(config) {
-		RED.nodes.createNode(this, config);
-		var node = this;
-		this.on('input', (msg, send, done) => {
-			if (msg.width) {
-				this.width = Number(msg.width);
-			} else {
-				this.width = Number(config.width);
-			}
-			if (msg.height) {
-				this.height = Number(msg.height);
-			} else {
-				this.height = Number(config.height);
-			}
-			send = send || function () {
-				node.send.apply(node, arguments);
-			};
-			this.errorHandler = (e, msg) => {
-				if (done) {
-					done(e);
-				} else {
-					node.error(e, msg);
-				}
-			};
-			const chartCallback = (ChartJS) => {
-				ChartJS.pluginService.register({
-					beforeDraw: function (chart) {
-						if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-							var ctx = chart.chart.ctx;
-							var chartArea = chart.chartArea;
-							ctx.save();
-							ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-							ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-							ctx.restore();
-						}
-					}
-				});
-				if (msg.plugins) {
-					let pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
-					pluginsToAdd.forEach(plugin => {
-						node.log(plugin + ' has been registered to chart plugins');
-						ChartJS.plugins.register(msg.plugins[plugin]);
-					});
-				}
-				var displayDataLabels;
-				try {
-					displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
-				} catch (e){
-					node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
-					displayDataLabels = false;
-				}
-				if (displayDataLabels) {
-					ChartJS.plugins.register(DataLabels);
-				} else ChartJS.plugins.unregister(DataLabels);
-			};
-			const canvasOptions = {
-				'width': this.width,
-				'height': this.height,
-				'chartCallback': chartCallback,
-			};
-			const canvas = new ChartJSNodeCanvas(canvasOptions);
-			if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
-				this.errorHandler('msg.payload is not a proper chart.js object', msg);
-			} else {
-				try {
-					if (msg.payload.data.datasets[0]) {
-						msg.payload.data.datasets.forEach((e,i) => {
-							if (!('backgroundColor' in e)) {
-								e.backgroundColor = toOpacity(pallet[i],0.9);
-							}
-							if (!('borderColor' in e)) {
-								e.borderColor = pallet[i];
-							}
-						});
-					}
-					var chart = msg.payload;
-					(async (chartConfig) => {
-						const image = await canvas.renderToBuffer(chartConfig);
-						msg.payload = image;
-						send(msg);
-					})(chart);
-					if (done) {
-						done();
-					}
-				} catch (e) {
-					this.errorHandler(e, msg);
-				}
-			}
-			if (done) {
-				done();
-			}
-		});
-	}
-	RED.nodes.registerType('chart-image', chartImageNode);
+        function chartImageNode(config) {
+                RED.nodes.createNode(this, config);
+                var node = this;
+                this.on('input', async (msg, send, done) => {
+                        if (msg.width) {
+                                this.width = Number(msg.width);
+                        } else {
+                                this.width = Number(config.width);
+                        }
+                        if (msg.height) {
+                                this.height = Number(msg.height);
+                        } else {
+                                this.height = Number(config.height);
+                        }
+                        send = send || function () {
+                                node.send.apply(node, arguments);
+                        };
+                        this.errorHandler = (e, msg) => {
+                                if (done) {
+                                        done(e);
+                                } else {
+                                        node.error(e, msg);
+                                }
+                        };
+                        const chartCallback = (ChartJS) => {
+                                const chartAreaBackground = {
+                                        id: 'chartAreaBackground',
+                                        beforeDraw(chart) {
+                                                if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+                                                        const ctx = chart.ctx;
+                                                        const chartArea = chart.chartArea;
+                                                        ctx.save();
+                                                        ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+                                                        ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+                                                        ctx.restore();
+                                                }
+                                        }
+                                };
+
+                                ChartJS.register(chartAreaBackground, Annotation);
+
+                                if (msg.plugins) {
+                                        const pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
+                                        pluginsToAdd.forEach(plugin => {
+                                                node.log(plugin + ' has been registered to chart plugins');
+                                                ChartJS.register(msg.plugins[plugin]);
+                                        });
+                                }
+                                let displayDataLabels;
+                                try {
+                                        displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
+                                } catch (e){
+                                        node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
+                                        displayDataLabels = false;
+                                }
+                                if (displayDataLabels) {
+                                        ChartJS.register(DataLabels);
+                                } else ChartJS.unregister(DataLabels);
+                        };
+                        const canvasOptions = {
+                                'width': this.width,
+                                'height': this.height,
+                                'chartCallback': chartCallback,
+                        };
+                        const canvas = new ChartJSNodeCanvas(canvasOptions);
+                        if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
+                                this.errorHandler('msg.payload is not a proper chart.js object', msg);
+                                return;
+                        }
+                        try {
+                                if (msg.payload.data.datasets[0]) {
+                                        msg.payload.data.datasets.forEach((e,i) => {
+                                                if (!('backgroundColor' in e)) {
+                                                        e.backgroundColor = toOpacity(pallet[i],0.9);
+                                                }
+                                                if (!('borderColor' in e)) {
+                                                        e.borderColor = pallet[i];
+                                                }
+                                        });
+                                }
+                                const chart = msg.payload;
+                                const image = await canvas.renderToBuffer(chart);
+                                msg.payload = image;
+                                send(msg);
+                                if (done) {
+                                        done();
+                                }
+                        } catch (e) {
+                                this.errorHandler(e, msg);
+                        }
+                });
+        }
+        RED.nodes.registerType('chart-image', chartImageNode);
 };
