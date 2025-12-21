@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "chai": "^4.5.0",
-    "eslint": "^6.8.0",
+    "eslint": "^9.39.2",
     "eslint-plugin-html": "^7.1.0",
     "mocha": "^10.7.3",
     "node-red": "^4.1.2",
