@@ -43,27 +43,95 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="chart-image">
-    <p>Generate a chart in image form using Chart.js</p>
-        <h3>Details:</h3>
-        <p>A chart image buffer will be generated using the chart.js definition object found in <code>msg.payload</code>. In Chart.js 4, a valid definition includes a <code>type</code>, a <code>data</code> object with labels and datasets, and an <code>options</code> object for styling and plugins.</p>
-        <p>For example:</p>
-        <pre>{
-    type: 'bar',
-    data: {
-        labels: ['One', 'Two'],
-        datasets: [{ label: 'Dataset', data: [1, 2] }]
-    },
-    options: {
-        plugins: {
-            datalabels: { display: true },
-            annotation: { annotations: {} }
-        }
+<script type="text/markdown" data-help-name="chart-image">
+Generate a Chart.js image buffer.
+
+### Inputs
+
+: payload (object) : Chart.js configuration containing `type`, `data`, and `options` in `msg.payload`.
+: width (number)   : Optional pixel width override supplied by `msg.width`.
+: height (number)  : Optional pixel height override supplied by `msg.height`.
+: plugins (array)  : Optional custom plugins from `msg.plugins`, registered alongside datalabels and annotation plugins.
+
+### Outputs
+
+1. Chart image
+: payload (buffer) : Image buffer rendered from the Chart.js configuration.
+
+### Details
+
+The node renders a chart from `msg.payload`, applies a default color palette when dataset colors are missing, and registers the datalabels plugin when `payload.options.plugins.datalabels.display` is `true`. Provide `msg.width` and `msg.height` to override the configured dimensions.
+
+### Examples
+
+Bar chart
+
+```json
+{
+  "type": "bar",
+  "data": {
+    "labels": ["One", "Two"],
+    "datasets": [
+      {
+        "label": "Dataset",
+        "data": [1, 2]
+      }
+    ]
+  },
+  "options": {
+    "plugins": {
+      "datalabels": {
+        "display": true
+      },
+      "annotation": {
+        "annotations": {}
+      }
     }
-}</pre>
-        <p>Setting <code>msg.width</code> and/or <code>msg.height</code> to the desired size in pixels will override the node configuration. </p>
-        <h3>Resources</h3>
-        <a href="https://www.chartjs.org/docs/latest/">Chart.js documentation</a><br>
-        <a href="https://www.npmjs.com/package/chartjs-node-canvas">charjs-code-canvas documentation</a><br>
-        <a href="https://chartjs-plugin-datalabels.netlify.app/guide/">chartjs-plugin-datalabels documentation</a>
+  }
+}
+```
+
+Line chart
+
+```json
+{
+  "type": "line",
+  "data": {
+    "labels": ["Pt 1", "Pt 2", "Pt 3", "Pt 4"],
+    "datasets": [
+      {
+        "label": "Sample",
+        "data": [12, 19, 7, 15],
+        "fill": false,
+        "tension": 0,
+        "pointRadius": 4,
+        "borderWidth": 2
+      }
+    ]
+  },
+  "options": {
+    "responsive": false,
+    "plugins": {
+      "title": {
+        "display": true,
+        "text": "Simple Line (4 points)"
+      },
+      "legend": {
+        "display": true
+      }
+    },
+    "scales": {
+      "y": {
+        "beginAtZero": true
+      }
+    }
+  }
+}
+```
+
+### Resources
+
+- [Chart.js documentation](https://www.chartjs.org/docs/latest/)
+- [chartjs-node-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
+- [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
 </script>
