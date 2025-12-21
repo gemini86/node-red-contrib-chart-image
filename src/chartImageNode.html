@@ -48,8 +48,7 @@
         <h3>Details:</h3>
         <p>A chart image buffer will be generated using the chart.js definition object found in <code>msg.payload</code>. In Chart.js 4, a valid definition includes a <code>type</code>, a <code>data</code> object with labels and datasets, and an <code>options</code> object for styling and plugins.</p>
         <p>For example:</p>
-        <pre>
-{
+        <pre>{
 	"type": "bar",
 	"data": {
 		"labels": [ "One", "Two" ],
@@ -70,13 +69,11 @@
 			}
 		}
 	}
-}
-		</pre>
+}</pre>
         <p>Setting <code>msg.width</code> and/or <code>msg.height</code> to the desired size in pixels will override the node configuration. </p>
 		<h3>More Examples:</h3>
 		<p>Line chart:</p>
-		<pre>
-{
+		<pre>{
 	"type": "line",
 	"data": {
 		"labels": [ "Pt 1",	"Pt 2",	"Pt 3",	"Pt 4" ],
@@ -108,8 +105,7 @@
 			}
 		}
 	}
-}
-		</pre>
+}</pre>
         <h3>Resources</h3>
         <a href="https://www.chartjs.org/docs/latest/">Chart.js documentation</a><br>
         <a href="https://www.npmjs.com/package/chartjs-node-canvas">charjs-code-canvas documentation</a><br>
