@@ -1,5 +1,5 @@
 {
-  "name": "node-red-contrib-chart-image",
+  "name": "@gemini86/node-red-contrib-chart-image",
   "version": "2.0.3",
   "description": "Use chartjs to generate charts and output them as image buffers.",
   "repository": "https://github.com/gemini86/node-red-contrib-chart-image",
