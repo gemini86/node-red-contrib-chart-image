@@ -1,3 +1,10 @@
+> ⚠️ **Legacy / Deprecated**
+>
+> Version 1.x of this node is deprecated.
+>  
+> Please use **v2.0.3 or later**.  
+> Migration details are available in the v2.0.3 release notes.
+
 # node-red-contrib-chart-image
 
 Generate a chart in image form using Chart.js
