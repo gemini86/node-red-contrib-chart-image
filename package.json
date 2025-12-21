@@ -5,6 +5,7 @@
   "repository": "https://github.com/gemini86/node-red-contrib-chart-image",
   "main": "",
   "node-red": {
+    "version": ">=3.1.0",
     "nodes": {
       "chart-image": "src/chartImageNode.js"
     }
