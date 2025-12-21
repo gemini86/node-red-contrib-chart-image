@@ -1,0 +1,106 @@
+[
+    {
+        "id": "07fc7ea559db0e48",
+        "type": "group",
+        "z": "a075ed75db622136",
+        "name": "Generate chart on HTTP request",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "33d6831c20191e44",
+            "58cacf981c606d3c",
+            "c124a6e990e719dc",
+            "1b19ef40ea0960dd"
+        ],
+        "x": 74,
+        "y": 239,
+        "w": 752,
+        "h": 82
+    },
+    {
+        "id": "33d6831c20191e44",
+        "type": "http in",
+        "z": "a075ed75db622136",
+        "g": "07fc7ea559db0e48",
+        "name": "",
+        "url": "/chart.png",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "58cacf981c606d3c"
+            ]
+        ]
+    },
+    {
+        "id": "58cacf981c606d3c",
+        "type": "change",
+        "z": "a075ed75db622136",
+        "g": "07fc7ea559db0e48",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"type\":\"bar\",\"data\":{\"labels\":[\"One\",\"Two\",\"Three\"],\"datasets\":[{\"label\":\"Dataset\",\"data\":[1,2,3]}]},\"options\":{\"plugins\":{\"datalabels\":{\"display\":true},\"annotation\":{\"annotations\":{}}}}}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 280,
+        "wires": [
+            [
+                "1b19ef40ea0960dd"
+            ]
+        ]
+    },
+    {
+        "id": "c124a6e990e719dc",
+        "type": "http response",
+        "z": "a075ed75db622136",
+        "g": "07fc7ea559db0e48",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "content-type": "image/png"
+        },
+        "x": 740,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "1b19ef40ea0960dd",
+        "type": "chart-image",
+        "z": "a075ed75db622136",
+        "g": "07fc7ea559db0e48",
+        "name": "",
+        "width": 500,
+        "height": 300,
+        "x": 570,
+        "y": 280,
+        "wires": [
+            [
+                "c124a6e990e719dc"
+            ]
+        ]
+    },
+    {
+        "id": "393a18195c2e3a11",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-chart-image": "1.2.0"
+        }
+    }
+]

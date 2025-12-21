@@ -1,10 +1,11 @@
 {
-  "name": "node-red-contrib-chart-image",
-  "version": "1.2.0",
+  "name": "@gemini86/node-red-contrib-chart-image",
+  "version": "2.0.3",
   "description": "Use chartjs to generate charts and output them as image buffers.",
   "repository": "https://github.com/gemini86/node-red-contrib-chart-image",
   "main": "",
   "node-red": {
+    "version": ">=3.1.0",
     "nodes": {
       "chart-image": "src/chartImageNode.js"
     }
@@ -16,20 +17,26 @@
     "image",
     "report"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha \"test/**/*.js\""
   },
   "author": "gemini86",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "chart.js": "^2.7.3",
-    "chartjs-node-canvas": "^3.2.0",
-    "chartjs-plugin-annotation": "^0.5.7",
-    "chartjs-plugin-annotations": "^0.6.1",
-    "chartjs-plugin-datalabels": "^0.7.0"
+    "chart.js": "^4.4.8",
+    "chartjs-node-canvas": "^5.0.0",
+    "chartjs-plugin-annotation": "^3.1.0",
+    "chartjs-plugin-datalabels": "^2.2.0"
   },
   "devDependencies": {
+    "chai": "^4.5.0",
     "eslint": "^6.8.0",
-    "eslint-plugin-html": "^7.1.0"
+    "eslint-plugin-html": "^7.1.0",
+    "mocha": "^10.7.3",
+    "node-red": "^4.1.2",
+    "node-red-node-test-helper": "^0.3.5"
   }
 }
