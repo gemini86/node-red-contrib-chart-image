@@ -54,7 +54,7 @@ msg.payload = {
 
 See the `examples/annotation_example.json` file for a complete working example.
 
- - NOTE: chartjs-plugin-datalabels registers itself automatically when imported. This node looks for a `display:true` object in the datalabels definition to register or unregistert the plugin. This prevents datalabels showing up aninvited.
+ - NOTE: chartjs-plugin-datalabels registers itself automatically when imported. This node looks for a `display:true` object in the datalabels definition to register or unregister the plugin. This prevents datalabels showing up uninvited.
 
 eg:
 
