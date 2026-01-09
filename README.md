@@ -19,6 +19,41 @@ chartArea: {
 }
 ````
 
+##### Using Annotations
+
+The annotation plugin allows you to add lines, boxes, points, and other annotations to your charts. Here's an example of adding a horizontal line annotation:
+
+````javascript
+msg.payload = {
+    type: 'bar',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar'],
+        datasets: [{
+            label: 'Sales',
+            data: [12, 19, 15]
+        }]
+    },
+    options: {
+        plugins: {
+            annotation: {
+                annotations: {
+                    targetLine: {
+                        type: 'line',
+                        yMin: 15,
+                        yMax: 15,
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        scaleID: 'y'
+                    }
+                }
+            }
+        }
+    }
+};
+````
+
+See the `examples/annotation_example.json` file for a complete working example.
+
  - NOTE: chartjs-plugin-datalabels registers itself automatically when imported. This node looks for a `display:true` object in the datalabels definition to register or unregistert the plugin. This prevents datalabels showing up aninvited.
 
 eg:
