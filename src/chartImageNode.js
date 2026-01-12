@@ -1,6 +1,7 @@
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
+const { registerables } = require('chart.js');
 const DataLabels = require('chartjs-plugin-datalabels');
-const Annotation = require('chartjs-plugin-annotation'); //eslint-disable-line no-unused-vars
+const Annotation = require('chartjs-plugin-annotation');
 const pallet = [
 	'rgba(51,102,204,1)', 'rgba(220,57,18,1)', 'rgba(255,153,0,1)', 'rgba(16,150,24,1)', 'rgba(153,0,153,1)',
 	'rgba(0,153,198,1)', 'rgba(221,68,119,1)', 'rgba(102,170,0,1)', 'rgba(184,46,46,1)', 'rgba(49,99,149,1)',
@@ -53,6 +54,9 @@ module.exports = function (RED) {
                                 }
                         };
                         const chartCallback = (ChartJS) => {
+                                // Register Chart.js core components first
+                                ChartJS.register(...registerables);
+
                                 const chartAreaBackground = {
                                         id: 'chartAreaBackground',
                                         beforeDraw(chart) {

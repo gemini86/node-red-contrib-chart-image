@@ -1,0 +1,97 @@
+[
+    {
+        "id": "annotation_example_group",
+        "type": "group",
+        "z": "annotation_flow",
+        "name": "Chart with Annotations Example",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "http_in_annotation",
+            "set_annotation_chart",
+            "chart_node_annotation",
+            "http_response_annotation"
+        ],
+        "x": 74,
+        "y": 239,
+        "w": 752,
+        "h": 82
+    },
+    {
+        "id": "http_in_annotation",
+        "type": "http in",
+        "z": "annotation_flow",
+        "g": "annotation_example_group",
+        "name": "",
+        "url": "/chart-with-annotations.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 280,
+        "wires": [
+            [
+                "set_annotation_chart"
+            ]
+        ]
+    },
+    {
+        "id": "set_annotation_chart",
+        "type": "change",
+        "z": "annotation_flow",
+        "g": "annotation_example_group",
+        "name": "Configure chart with annotations",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"type\":\"bar\",\"data\":{\"labels\":[\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\"],\"datasets\":[{\"label\":\"Sales\",\"data\":[12,19,15,25,22],\"backgroundColor\":\"rgba(54,162,235,0.5)\"}]},\"options\":{\"responsive\":false,\"plugins\":{\"annotation\":{\"annotations\":{\"targetLine\":{\"type\":\"line\",\"yMin\":20,\"yMax\":20,\"borderColor\":\"red\",\"borderWidth\":2,\"scaleID\":\"y\",\"label\":{\"content\":\"Target: 20\",\"enabled\":true,\"position\":\"end\"}},\"thresholdBox\":{\"type\":\"box\",\"yMin\":0,\"yMax\":15,\"backgroundColor\":\"rgba(255,99,132,0.25)\",\"borderWidth\":0}}}}}}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "chart_node_annotation"
+            ]
+        ]
+    },
+    {
+        "id": "chart_node_annotation",
+        "type": "chart-image",
+        "z": "annotation_flow",
+        "g": "annotation_example_group",
+        "name": "",
+        "width": 600,
+        "height": 400,
+        "x": 710,
+        "y": 280,
+        "wires": [
+            [
+                "http_response_annotation"
+            ]
+        ]
+    },
+    {
+        "id": "http_response_annotation",
+        "type": "http response",
+        "z": "annotation_flow",
+        "g": "annotation_example_group",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "content-type": "image/png"
+        },
+        "x": 920,
+        "y": 280,
+        "wires": []
+    }
+]
