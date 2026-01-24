@@ -1,128 +1,77 @@
-const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
-const { registerables } = require('chart.js');
-const DataLabels = require('chartjs-plugin-datalabels');
-const Annotation = require('chartjs-plugin-annotation');
-const pallet = [
-	'rgba(51,102,204,1)', 'rgba(220,57,18,1)', 'rgba(255,153,0,1)', 'rgba(16,150,24,1)', 'rgba(153,0,153,1)',
-	'rgba(0,153,198,1)', 'rgba(221,68,119,1)', 'rgba(102,170,0,1)', 'rgba(184,46,46,1)', 'rgba(49,99,149,1)',
-	'rgba(51,102,204,1)', 'rgba(153,68,153,1)', 'rgba(34,170,153,1)', 'rgba(170,170,17,1)', 'rgba(102,51,204,1)',
-	'rgba(230,115,0,1)', 'rgba(139,7,7,1)', 'rgba(101,16,103,1)', 'rgba(50,146,98,1)', 'rgba(85,116,166,1)',
-	'rgba(59,62,172,1)', 'rgba(183,115,34,1)', 'rgba(22,214,32,1)', 'rgba(185,19,131,1)', 'rgba(244,53,158,1)',
-	'rgba(156,89,53,1)', 'rgba(169,196,19,1)', 'rgba(42,119,141,1)', 'rgba(102,141,28,1)', 'rgba(190,164,19,1)',
-	'rgba(12,89,34,1)', 'rgba(116,52,17,1)'
-];
+"use strict";
 
-function toOpacity(color,aValue) {
-	if (color && aValue) {
-		if (typeof aValue !== 'string' && typeof aValue !== 'number'){
-			aValue = 1;
-		}
-		if (typeof color === 'string') {
-			let vals = color.split('(')[1].split(')')[0];
-			vals = vals.split(',');
-			vals.pop();
-			vals.push(aValue.toString());
-			return `rgba(${vals.join(',')})`;
-		}
-		return color;
-	} else return '#caca69';
-}
+const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 
 module.exports = function (RED) {
-        function chartImageNode(config) {
-                RED.nodes.createNode(this, config);
-                var node = this;
-                this.on('input', async (msg, send, done) => {
-                        if (msg.width) {
-                                this.width = Number(msg.width);
-                        } else {
-                                this.width = Number(config.width);
-                        }
-                        if (msg.height) {
-                                this.height = Number(msg.height);
-                        } else {
-                                this.height = Number(config.height);
-                        }
-                        send = send || function () {
-                                node.send.apply(node, arguments);
-                        };
-                        this.errorHandler = (e, msg) => {
-                                if (done) {
-                                        done(e);
-                                } else {
-                                        node.error(e, msg);
-                                }
-                        };
-                        const chartCallback = (ChartJS) => {
-                                // Register Chart.js core components first
-                                ChartJS.register(...registerables);
+  function ChartImageNode(config) {
+    RED.nodes.createNode(this, config);
+    const node = this;
 
-                                const chartAreaBackground = {
-                                        id: 'chartAreaBackground',
-                                        beforeDraw(chart) {
-                                                if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
-                                                        const ctx = chart.ctx;
-                                                        const chartArea = chart.chartArea;
-                                                        ctx.save();
-                                                        ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
-                                                        ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
-                                                        ctx.restore();
-                                                }
-                                        }
-                                };
+    const defaultWidth = Number(config.width) > 0 ? Number(config.width) : 800;
+    const defaultHeight = Number(config.height) > 0 ? Number(config.height) : 600;
+    const defaultMime = (config.mime || "image/png").toLowerCase();
 
-                                ChartJS.register(chartAreaBackground, Annotation);
+    function deepCopy(obj) {
+      if (typeof structuredClone === "function") return structuredClone(obj);
+      return JSON.parse(JSON.stringify(obj));
+    }
 
-                                if (msg.plugins) {
-                                        const pluginsToAdd = Object.getOwnPropertyNames(msg.plugins);
-                                        pluginsToAdd.forEach(plugin => {
-                                                node.log(plugin + ' has been registered to chart plugins');
-                                                ChartJS.register(msg.plugins[plugin]);
-                                        });
-                                }
-                                let displayDataLabels;
-                                try {
-                                        displayDataLabels = RED.util.getObjectProperty(msg, 'payload.options.plugins.datalabels.display');
-                                } catch (e){
-                                        node.log('datalabels plugin not defined correctly or not included. Plugin not registered on this chart.');
-                                        displayDataLabels = false;
-                                }
-                                if (displayDataLabels) {
-                                        ChartJS.register(DataLabels);
-                                } else ChartJS.unregister(DataLabels);
-                        };
-                        const canvasOptions = {
-                                'width': this.width,
-                                'height': this.height,
-                                'chartCallback': chartCallback,
-                        };
-                        const canvas = new ChartJSNodeCanvas(canvasOptions);
-                        if (RED.util.getObjectProperty(msg, 'payload.type') === undefined || RED.util.getObjectProperty(msg, 'payload.data') === undefined) {
-                                this.errorHandler('msg.payload is not a proper chart.js object', msg);
-                                return;
-                        }
-                        try {
-                                if (msg.payload.data.datasets[0]) {
-                                        msg.payload.data.datasets.forEach((e,i) => {
-                                                if (!('backgroundColor' in e)) {
-                                                        e.backgroundColor = toOpacity(pallet[i],0.9);
-                                                }
-                                                if (!('borderColor' in e)) {
-                                                        e.borderColor = pallet[i];
-                                                }
-                                        });
-                                }
-                                const chart = msg.payload;
-                                const image = await canvas.renderToBuffer(chart);
-                                msg.payload = image;
-                                send(msg);
-                                if (done) {
-                                        done();
-                                }
-                        } catch (e) {
-                                this.errorHandler(e, msg);
-                        }
-                });
-        }
-        RED.nodes.registerType('chart-image', chartImageNode);
+    node.on("input", async (msg, send, done) => {
+      send = send || function () { node.send.apply(node, arguments); };
+
+      if (!msg || typeof msg.payload !== "object" || msg.payload === null) {
+        node.error("msg.payload must be a Chart.js config object", msg);
+        done();
+        return;
+      }
+
+      const width =
+        Number(msg.width) > 0 ? Number(msg.width) :
+        Number(msg.payload.width) > 0 ? Number(msg.payload.width) :
+        defaultWidth;
+
+      const height =
+        Number(msg.height) > 0 ? Number(msg.height) :
+        Number(msg.payload.height) > 0 ? Number(msg.payload.height) :
+        defaultHeight;
+
+      let chartConfig;
+      try {
+        chartConfig = deepCopy(msg.payload);
+      } catch (err) {
+        node.error("Failed to deep-copy chart config", msg);
+        done();
+        return;
+      }
+
+      const mime = (msg.mime || defaultMime).toLowerCase();
+
+      try {
+        // New renderer per message, plugins managed by chartjs-node-canvas
+        const chartJSNodeCanvas = new ChartJSNodeCanvas({
+          width,
+          height,
+          plugins: {
+            modern: ["chartjs-plugin-annotation"],
+            requireLegacy: ["chartjs-plugin-datalabels"],
+          },
+        });
+
+        const buffer = await chartJSNodeCanvas.renderToBuffer(chartConfig, mime);
+
+        msg.payload = buffer;
+        msg.width = width;
+        msg.height = height;
+        msg.mime = mime;
+
+        send(msg);
+      } catch (err) {
+        node.error(err, msg);
+      }
+
+      done();
+    });
+  }
+
+  RED.nodes.registerType("chart-image", ChartImageNode);
 };
