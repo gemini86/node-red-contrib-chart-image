@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
 module.exports = function (RED) {
   function ChartImageNode(config) {
@@ -9,37 +9,37 @@ module.exports = function (RED) {
 
     const defaultWidth = Number(config.width) > 0 ? Number(config.width) : 800;
     const defaultHeight = Number(config.height) > 0 ? Number(config.height) : 600;
-    const defaultMime = (config.mime || "image/png").toLowerCase();
+    const defaultMime = (config.mime || 'image/png').toLowerCase();
 
     function deepCopy(obj) {
-      if (typeof structuredClone === "function") return structuredClone(obj);
+      if (typeof structuredClone === 'function') return structuredClone(obj);
       return JSON.parse(JSON.stringify(obj));
     }
 
-    node.on("input", async (msg, send, done) => {
+    node.on('input', async (msg, send, done) => {
       send = send || function () { node.send.apply(node, arguments); };
 
-      if (!msg || typeof msg.payload !== "object" || msg.payload === null) {
-        node.error("msg.payload must be a Chart.js config object", msg);
+      if (!msg || typeof msg.payload !== 'object' || msg.payload === null) {
+        node.error('msg.payload must be a Chart.js config object', msg);
         done();
         return;
       }
 
       const width =
         Number(msg.width) > 0 ? Number(msg.width) :
-        Number(msg.payload.width) > 0 ? Number(msg.payload.width) :
-        defaultWidth;
+          Number(msg.payload.width) > 0 ? Number(msg.payload.width) :
+            defaultWidth;
 
       const height =
         Number(msg.height) > 0 ? Number(msg.height) :
-        Number(msg.payload.height) > 0 ? Number(msg.payload.height) :
-        defaultHeight;
+          Number(msg.payload.height) > 0 ? Number(msg.payload.height) :
+            defaultHeight;
 
       let chartConfig;
       try {
         chartConfig = deepCopy(msg.payload);
       } catch (err) {
-        node.error("Failed to deep-copy chart config", msg);
+        node.error('Failed to deep-copy chart config', msg);
         done();
         return;
       }
@@ -52,8 +52,8 @@ module.exports = function (RED) {
           width,
           height,
           plugins: {
-            modern: ["chartjs-plugin-annotation"],
-            requireLegacy: ["chartjs-plugin-datalabels"],
+            modern: ['chartjs-plugin-annotation'],
+            requireLegacy: ['chartjs-plugin-datalabels'],
           },
         });
 
@@ -73,5 +73,5 @@ module.exports = function (RED) {
     });
   }
 
-  RED.nodes.registerType("chart-image", ChartImageNode);
+  RED.nodes.registerType('chart-image', ChartImageNode);
 };
