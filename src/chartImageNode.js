@@ -48,12 +48,51 @@ module.exports = function (RED) {
 
       try {
         // New renderer per message, plugins managed by chartjs-node-canvas
+        // Always include built-in plugins and allow users to add more via msg.plugins
+        const modernPlugins = ['chartjs-plugin-annotation'];
+        const legacyPlugins = ['chartjs-plugin-datalabels'];
+
+        // Support chart background via chartjs-node-canvas convenience plugin
+        // Prefer background color from chart config: msg.payload.options.backgroundColor
+        let backgroundColor;
+        try {
+          const opt = chartConfig && chartConfig.options;
+          if (opt && typeof opt.backgroundColor === 'string' && opt.backgroundColor.length > 0) {
+            backgroundColor = opt.backgroundColor;
+          } else if (typeof msg.backgroundColour === 'string' && msg.backgroundColour.length > 0) {
+            backgroundColor = msg.backgroundColour;
+          } else {
+            backgroundColor = 'white';
+          }
+        } catch (_) {
+          // ignore and leave backgroundColour undefined
+        }
+
+        if (msg.plugins && typeof msg.plugins === 'object') {
+          try {
+            const values = Array.isArray(msg.plugins)
+              ? msg.plugins
+              : Object.values(msg.plugins);
+            for (const p of values) {
+              if (!p) continue;
+              // chartjs-node-canvas supports either module names (string) or plugin objects
+              if (typeof p === 'string' || typeof p === 'object' || typeof p === 'function') {
+                modernPlugins.push(p);
+              }
+            }
+          } catch (e) {
+            // If msg.plugins is malformed, ignore and continue with built-ins
+            node.warn('msg.plugins is malformed, ignoring additional plugins');
+          }
+        }
+
         const chartJSNodeCanvas = new ChartJSNodeCanvas({
           width,
           height,
+          backgroundColour: backgroundColor,
           plugins: {
-            modern: ['chartjs-plugin-annotation'],
-            requireLegacy: ['chartjs-plugin-datalabels'],
+            modern: modernPlugins,
+            requireLegacy: legacyPlugins,
           },
         });
 
