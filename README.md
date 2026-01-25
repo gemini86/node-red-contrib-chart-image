@@ -10,8 +10,8 @@ Setting `msg.width` and/or `msg.height` to the desired size in pixels will overr
 #### Default Color Palette
 If no `backgroundColor` or `borderColor` is defined for a dataset, Chart.js assigns the global default color of `rgba(0,0,0,0.1)`. To make life a little easier, this node changes that behavior to assign each dataset a color from a preset palette of 32 colors. If you define your own colors in a dataset, that color will be used; you should define both `backgroundColor` and `borderColor` if both are to be displayed. For line charts, set `fill: false` to prevent the use of `backgroundColor`.
 
-#### Background Color
-To set a non-transparent canvas background, define a CSS color under `msg.payload.options.backgroundColor` in your Chart.js configuration. The node will pass this to the chartjs-node-canvas convenience plugin to fill the canvas.
+#### Canvas Background Color
+To set a non-transparent canvas background, define a CSS color under `msg.payload.options.chartBackgroundColor` (or `msg.payload.options.chartBackgroundColour`) in your Chart.js configuration. The node will pass this to the chartjs-node-canvas convenience plugin to fill the canvas.
 
 ````javascript
 msg.payload = {
@@ -21,8 +21,6 @@ msg.payload = {
     }
 };
 ````
-
-Tip: For backward compatibility, `msg.backgroundColour` or `msg.backgroundColor` will still be honored if `options.backgroundColor` is not provided, but defining it in the chart config is preferred.
 
 #### Plugins
 
