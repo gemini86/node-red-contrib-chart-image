@@ -1,25 +1,32 @@
 # node-red-contrib-chart-image
 
 Generate a chart in image form using Chart.js
-## Details:
+## Details
 A chart image buffer will be generated using the chart.js definition object found in <code>msg.payload</code>. See the chart.js documentation for more info on defining a chart.
 
-#### Canvas Size:
+#### Canvas Size
 Setting `msg.width` and/or `msg.height` to the desired size in pixels will override the node configuration.
 
-#### Default Color Pallet:
-If no `backgroundColor` or `borderColor` is defined for a dataset, Chartjs assigns the global default color of `rgba(0,0,0,0.1)`. To make life a little easier, this node changes that behavior to assign each dataset a color from preset pallet, which includes 32 colors. If you define your own colors in a dataset, that color will be used, you do have to define both `backgroundColor` and `borderColor` if both are to be displayed. for line charts, use `fill:false` to prevent the use of `backgroundColor`.
+#### Default Color Palette
+If no `backgroundColor` or `borderColor` is defined for a dataset, Chart.js assigns the global default color of `rgba(0,0,0,0.1)`. To make life a little easier, this node changes that behavior to assign each dataset a color from a preset palette of 32 colors. If you define your own colors in a dataset, that color will be used; you should define both `backgroundColor` and `borderColor` if both are to be displayed. For line charts, set `fill: false` to prevent the use of `backgroundColor`.
 
-#### Plugins:
-This node includes `chartjs-plugin-datalabels` and `chartjs-plugin-annotations`. Each can be defined as you would according to their documentation. You can also define the chart background color by defining a `chartArea` object under the options scope.
+#### Canvas Background Color
+To set a non-transparent canvas background, define a CSS color under `msg.payload.options.chartBackgroundColor` (or `msg.payload.options.chartBackgroundColour`) in your Chart.js configuration. The node will pass this to the chartjs-node-canvas convenience plugin to fill the canvas.
 
 ````javascript
-chartArea: {
-    backgroundColor: 'white'
-}
+msg.payload = {
+    // ... your chart config ...
+    options: {
+        backgroundColor: 'white' // or '#ffffff', 'rgba(255,255,255,1)', etc.
+    }
+};
 ````
 
-##### Using Annotations
+#### Plugins
+
+This node includes `chartjs-plugin-annotation` and `chartjs-plugin-datalabels`. Configure them under `options.plugins` according to their documentation.
+
+Using Annotation
 
 The annotation plugin allows you to add lines, boxes, points, and other annotations to your charts. Here's an example of adding a horizontal line annotation:
 
@@ -37,7 +44,7 @@ msg.payload = {
         plugins: {
             annotation: {
                 annotations: {
-                    targetLine: {
+                    myImportantLine: {
                         type: 'line',
                         yMin: 15,
                         yMax: 15,
@@ -52,9 +59,9 @@ msg.payload = {
 };
 ````
 
-See the `examples/annotation_example.json` file for a complete working example.
+See the complete example in [examples/annotation_example.json](examples/annotation_example.json).
 
- - NOTE: chartjs-plugin-datalabels registers itself automatically when imported. This node looks for a `display:true` object in the datalabels definition to register or unregister the plugin. This prevents datalabels showing up uninvited.
+Note: `chartjs-plugin-datalabels` registers itself automatically when imported. This node looks for a `display: true` object in the datalabels definition to register or unregister the plugin, preventing datalabels from showing up uninvited.
 
 eg:
 
@@ -69,30 +76,42 @@ msg.payload = {
        }
 }
 ````
-Additional plugins can be used by installing the desired plugin in the Node-RED install directory and following the settings.js example to import the module into your Node-RED instance.
+Additional Plugins via `msg.plugins`
+
+You can add plugins at runtime via `msg.plugins`.
+
+Preferred (modern Node-RED): use the Function node “Setup” tab to require or install your plugin, then attach it to `msg.plugins` in your Function logic. For example, after setting up `myMuchNeededPlugin` in the Setup tab, set:
+
+````javascript
+msg.plugins = {
+    myMuchNeededPlugin: myMuchNeededPlugin
+};
+````
+Alternatively (legacy): you can still add modules in `settings.js` using `functionGlobalContext`, then reference them from a Function node and pass them via `msg.plugins`:
 
 ````javascript
 functionGlobalContext: {
         // os:require('os'),
         // jfive:require("johnny-five"),
         // j5board:require("johnny-five").Board({repl:false}),
-		myMuchNeededPlugin: require('chartjs-plugin-yourplugin')
+        myMuchNeededPlugin: require('chartjs-plugin-yourplugin')
     },
 ````
-From there, you can pass it to your chart vie `msg.plugins`.
+
+Then in your Function node:
 
 ````javascript
 msg.plugins = {
     myMuchNeededPlugin: global.get('myMuchNeededPlugin')
 };
 ````
-Then you just need to define the plugin options in your chart definition object.
+The node continues to include and handle `chartjs-plugin-annotation` and `chartjs-plugin-datalabels` as before. Any plugins you provide via `msg.plugins` are added in addition to those. Define plugin options under `options.plugins[pluginId]` in your Chart.js configuration.
 
 #### Resources
 - [Chart.js documentation](https://www.chartjs.org/docs/latest/)
-- [charjs-code-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
+- [chartjs-node-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
 - [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
-- [chartjs-plugin-annotations](https://github.com/chartjs/chartjs-plugin-annotation#readme)
+- [chartjs-plugin-annotation](https://github.com/chartjs/chartjs-plugin-annotation#readme)
 
 #### Please report bugs, suggest improvements!
 https://github.com/gemini86/node-red-contrib-chart-image/issues

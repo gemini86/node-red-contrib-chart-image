@@ -4,8 +4,8 @@
         color: '#81e3c9',
         defaults: {
             name: {value:''},
-			width: {value: 500},
-			height: {value: 300}
+			    width: {value: 500},
+    			height: {value: 300}
         },
         inputs:1,
         outputs:1,
@@ -52,6 +52,7 @@ Generate a Chart.js image buffer.
 : width (number)   : Optional pixel width override supplied by `msg.width`.
 : height (number)  : Optional pixel height override supplied by `msg.height`.
 : plugins (array)  : Optional custom plugins from `msg.plugins`, registered alongside datalabels and annotation plugins.
+: options.backgroundColor (string) : Optional canvas background color in `msg.payload.options.backgroundColor`. If omitted, `msg.backgroundColour` / `msg.backgroundColor` are used as a fallback.
 
 ### Outputs
 
@@ -60,7 +61,7 @@ Generate a Chart.js image buffer.
 
 ### Details
 
-The node renders a chart from `msg.payload`, applies a default color palette when dataset colors are missing, and registers the datalabels plugin when `payload.options.plugins.datalabels.display` is `true`. Provide `msg.width` and `msg.height` to override the configured dimensions.
+The node renders a chart from `msg.payload`, applies a default color palette when dataset colors are missing, respects `options.backgroundColor` for the canvas fill, and registers the datalabels plugin when `payload.options.plugins.datalabels.display` is `true`. Provide `msg.width` and `msg.height` to override the configured dimensions.
 
 ### Examples
 
