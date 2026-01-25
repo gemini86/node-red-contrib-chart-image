@@ -53,21 +53,27 @@ module.exports = function (RED) {
         const legacyPlugins = ['chartjs-plugin-datalabels'];
 
         // Support chart background via chartjs-node-canvas convenience plugin
-        // Prefer background color from chart config: msg.payload.options.backgroundColor
+        // Prefer background color from chart config: msg.payload.options.chartBackgroundColor
         let backgroundColor;
         try {
           const opt = chartConfig && chartConfig.options;
-          if (opt && typeof opt.backgroundColor === 'string' && opt.backgroundColor.length > 0) {
-            backgroundColor = opt.backgroundColor;
-          } else if (typeof msg.backgroundColour === 'string' && msg.backgroundColour.length > 0) {
-            backgroundColor = msg.backgroundColour;
-          } else {
-            backgroundColor = 'white';
+          if (opt && typeof opt.chartBackgroundColor === 'string' && opt.chartBackgroundColor.length > 0) {
+            backgroundColor = opt.chartBackgroundColor;
+          } else if (opt.chartBackgroundColour && typeof opt.chartBackgroundColour === 'string' && opt.chartBackgroundColour.length > 0) {
+            backgroundColor = opt.chartBackgroundColour;
           }
         } catch (_) {
-          // ignore and leave backgroundColour undefined
+          node.warn('Error reading chart background color from config, using defaults');
         }
-
+        try {
+          if (chartConfig?.options?.plugins?.datalabels === undefined) {
+            // Disable datalabels plugin by default if not explicitly disabled
+            RED.util.setObjectProperty(chartConfig, 'options.plugins.datalabels.display', false, true);
+          }
+        } catch (e) {
+          node.warn('Error setting default datalabels plugin display option');
+          node.log(e);          
+        }
         if (msg.plugins && typeof msg.plugins === 'object') {
           try {
             const values = Array.isArray(msg.plugins)
@@ -89,11 +95,11 @@ module.exports = function (RED) {
         const chartJSNodeCanvas = new ChartJSNodeCanvas({
           width,
           height,
-          backgroundColour: backgroundColor,
+          backgroundColour: backgroundColor ?? 'white',
           plugins: {
             modern: modernPlugins,
             requireLegacy: legacyPlugins,
-          },
+          }
         });
 
         const buffer = await chartJSNodeCanvas.renderToBuffer(chartConfig, mime);
