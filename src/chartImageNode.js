@@ -81,8 +81,8 @@ module.exports = function (RED) {
               : Object.values(msg.plugins);
             for (const p of values) {
               if (!p) continue;
-              // chartjs-node-canvas supports either module names (string) or plugin objects
-              if (typeof p === 'string' || typeof p === 'object' || typeof p === 'function') {
+              // chartjs-node-canvas supports plugin module names (string)
+              if (typeof p === 'string') {
                 modernPlugins.push(p);
               }
             }
