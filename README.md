@@ -76,21 +76,35 @@ msg.payload = {
        }
 }
 ````
-#### Additional Plugins via `msg.plugins` 
+Additional Plugins via `msg.plugins`
 
-**Note:** This only works for modern Chart.js plugins, see [chartjs-node-canvas docs](https://www.npmjs.com/package/chartjs-node-canvas?activeTab=readme#usage)
+You can add plugins at runtime via `msg.plugins`.
 
-You can add plugins to be registered at runtime via `msg.plugins`.
-
-#### Preferred (modern Node-RED): Install your needed plugin in your node-red working directory. **OR**, if your settings file allows, use the Function node “Setup” tab to require or install your plugin, then point to it via `msg.plugins` in your Function logic. For example, after your plugin is installed, set:
+Preferred (modern Node-RED): use the Function node “Setup” tab to require or install your plugin, then attach it to `msg.plugins` in your Function logic. For example, after setting up `myMuchNeededPlugin` in the Setup tab, set:
 
 ````javascript
 msg.plugins = {
-    myMuchNeededPlugin: 'my-much-needed-plugin-id' // This should be the actual plugin ID of your needed plugin
+    myMuchNeededPlugin: myMuchNeededPlugin
 };
 ````
-Please read the documentation for your plugin, as it may or may not be enabled by default once registered.
+Alternatively (legacy): you can still add modules in `settings.js` using `functionGlobalContext`, then reference them from a Function node and pass them via `msg.plugins`:
 
+````javascript
+functionGlobalContext: {
+        // os:require('os'),
+        // jfive:require("johnny-five"),
+        // j5board:require("johnny-five").Board({repl:false}),
+        myMuchNeededPlugin: require('chartjs-plugin-yourplugin')
+    },
+````
+
+Then in your Function node:
+
+````javascript
+msg.plugins = {
+    myMuchNeededPlugin: global.get('myMuchNeededPlugin')
+};
+````
 The node continues to include and handle `chartjs-plugin-annotation` and `chartjs-plugin-datalabels` as before. Any plugins you provide via `msg.plugins` are added in addition to those. Define plugin options under `options.plugins[pluginId]` in your Chart.js configuration.
 
 #### Resources
