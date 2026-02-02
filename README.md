@@ -11,14 +11,16 @@ Setting `msg.width` and/or `msg.height` to the desired size in pixels will overr
 If no `backgroundColor` or `borderColor` is defined for a dataset, Chart.js assigns the global default color of `rgba(0,0,0,0.1)`. To make life a little easier, this node changes that behavior to assign each dataset a color from a preset palette of 32 colors. If you define your own colors in a dataset, that color will be used; you should define both `backgroundColor` and `borderColor` if both are to be displayed.
 
 ## Canvas Background Color
-To set a non-transparent canvas background, define a CSS color under `msg.payload.options.chartBackgroundColor` (or `msg.payload.options.chartBackgroundColour`) in your Chart.js configuration. The node will pass this to the chartjs-node-canvas convenience plugin to fill the canvas.
+To set a non-transparent canvas background, define a CSS color under `msg.payload.options.chartBackgroundColor` or `msg.payload.options.chartBackgroundColour` in your Chart.js configuration. Both American and British spellings are supported for convenience.
+The node will pass this to the chartjs-node-canvas convenience plugin to fill the canvas.
 
 ````javascript
 msg.payload = {
     // ... your chart config ...
     options: {
         chartBackgroundColor: 'white' // or '#ffffff', 'rgba(255,255,255,1)', etc.
-    }
+    },
+    // chartBackgroundColour: 'white' // British spelling also supported
 };
 ````
 
@@ -79,7 +81,7 @@ See a complete example in [examples/annotation_example.json](examples/annotation
 
 Under normal Chart.js use, `chartjs-plugin-datalabels` is enabled by default when registered. Instead, `node-red-contrib-chart-image` node looks for a `display: true` object in the datalabels definition to register or unregister the plugin, preventing datalabels from showing up uninvited.
 
-eg:
+e.g.,
 
  ````javascript
 msg.payload = {
@@ -95,7 +97,7 @@ msg.payload = {
 
 Configuring a dataset to use `chartjs-plug-datalabels` will override this global config.
 
-eg:
+e.g.,
 
  ````javascript
 msg.payload = {
