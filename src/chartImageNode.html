@@ -44,7 +44,46 @@
 </script>
 
 <script type="text/markdown" data-help-name="chart-image">
+
 Generate a chart image buffer using Chart.js.
+
+---
+
+#### Time Series Support
+
+**Time series charts are supported out of the box.** The [chartjs-adapter-moment](https://github.com/chartjs/chartjs-adapter-moment) adapter is included and automatically registered. To use time axes, set your axis `type` to `'time'` in your Chart.js config. No extra install or import is needed.
+
+**Example: Time Series Chart**
+
+```json
+{
+  "type": "line",
+  "data": {
+    "datasets": [
+      {
+        "label": "My Time Series",
+        "data": [
+          { "x": "2024-01-01", "y": 10 },
+          { "x": "2024-01-02", "y": 15 },
+          { "x": "2024-01-03", "y": 12 }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "scales": {
+      "x": {
+        "type": "time",
+        "time": { "unit": "day" }
+      }
+    }
+  }
+}
+```
+
+See the [Chart.js time scale documentation](https://www.chartjs.org/docs/latest/axes/cartesian/time.html) for more options and formatting.
+
+---
 
 ### Inputs
 
