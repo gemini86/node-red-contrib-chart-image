@@ -44,6 +44,16 @@ module.exports = function (RED) {
         height = defaultHeight;
         if (debug) node.warn('[chart-image] Using height from config: ' + height);
       }
+
+      let chartConfig;
+      try {
+        chartConfig = deepCopy(msg.payload);
+      } catch (err) {
+        node.error('Failed to deep-copy chart config', msg);
+        done();
+        return;
+      }
+
       // Check for incompatible or missing options
       if (debug) {
         if (!chartConfig.type) {
@@ -58,15 +68,6 @@ module.exports = function (RED) {
         if (chartConfig.options && chartConfig.options.animation === true) {
           node.warn('[chart-image] options.animation=true is not supported in image rendering. Animations are disabled.');
         }
-      }
-
-      let chartConfig;
-      try {
-        chartConfig = deepCopy(msg.payload);
-      } catch (err) {
-        node.error('Failed to deep-copy chart config', msg);
-        done();
-        return;
       }
 
       const mime = (msg.mime || defaultMime).toLowerCase();
