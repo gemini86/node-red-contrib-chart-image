@@ -20,7 +20,7 @@ This document provides a reference for writing and maintaining the help text in 
 ## Section-by-Section Template
 
 ### Title
-- Start with a short, clear summary: "Generate a Chart.js image buffer."
+- Start with a short, clear summary: "Generate a chart image buffer using Chart.js."
 
 ### Inputs
 - List each input as `: field (type) : description`.

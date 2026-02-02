@@ -1,7 +1,7 @@
 # node-red-contrib-chart-image
 
 Generate a chart in image form using Chart.js
-# Details
+## Details
 A chart image buffer will be generated using the chart.js definition object found in <code>msg.payload</code>. See the chart.js documentation for more info on [defining a chart](https://www.chartjs.org/docs/4.4.9/configuration/).
 
 ## Canvas Size
@@ -18,9 +18,9 @@ The node will pass this to the chartjs-node-canvas convenience plugin to fill th
 msg.payload = {
     // ... your chart config ...
     options: {
-        chartBackgroundColor: 'white' // or '#ffffff', 'rgba(255,255,255,1)', etc.
-    },
-    // chartBackgroundColour: 'white' // British spelling also supported
+        chartBackgroundColor: 'white', // or '#ffffff', 'rgba(255,255,255,1)', etc.
+        // chartBackgroundColour: 'white' // British spelling also supported
+    }
 };
 ````
 
@@ -93,7 +93,7 @@ msg.payload = {
 }
 ````
 
-Configuring a dataset to use `chartjs-plug-datalabels` will override this global config.
+Configuring a dataset to use `chartjs-plugin-datalabels` will override this global config.
 
 e.g.,
 
