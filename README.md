@@ -33,9 +33,7 @@ This node includes the built-in Chart.js plugins as well as a couple others, for
 - Title
 - Subtitle
 - Filler
-
-Note 
-: For unknown reasons, the built-in data decimation plugin is not currently working. A separate plugin to handle this is in the works, until then, you'll need to handle data decimation elsewhere in the flow or provide a plugin.
+- Decimation
 
 #### Included for convenience (disabled by default):
 - chartjs-plugin-annotation
