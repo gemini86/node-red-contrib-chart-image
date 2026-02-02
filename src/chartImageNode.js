@@ -54,7 +54,7 @@ module.exports = function (RED) {
 
         // Support chart background via chartjs-node-canvas convenience plugin
         // Prefer background color from chart config: msg.payload.options.chartBackgroundColor
-        // Default to transparent (no background color passed in to chatjs-node-canvas)
+        // Default to transparent (no background color passed in to chartjs-node-canvas)
         let backgroundColor;
         try {
           const opt = chartConfig && chartConfig.options;
