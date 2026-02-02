@@ -26,7 +26,7 @@ msg.payload = {
 
 ## Plugins
 
-This node includes the built-in Chart.js plugins as well as a couple others, for convenience.
+This node includes the built-in Chart.js plugins as well as a couple others, for convenience. **Time series charts are supported out of the box** via the [chartjs-adapter-moment](https://github.com/chartjs/chartjs-adapter-moment) adapter, which is automatically registered for you.
 
 #### Supported built-in plugins:
 - Legend
@@ -38,6 +38,7 @@ This node includes the built-in Chart.js plugins as well as a couple others, for
 #### Included for convenience (disabled by default):
 - chartjs-plugin-annotation
 - chartjs-plugin-datalabels
+- chartjs-adapter-moment (for time series axes)
 
 ### Using Annotation
 
@@ -113,6 +114,40 @@ msg.payload = {
 }
 ````
 See `chartjs-plugin-datalabels` [documentation](https://chartjs-plugin-datalabels.netlify.app/guide/) for more info.
+
+### Time Series support
+
+To use time series axes, simply specify `type: 'time'` for your axis in the Chart.js config. The adapter is already included and registered, so you do **not** need to install or import anything extra.
+
+Example:
+
+````javascript
+msg.payload = {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'My Time Series',
+            data: [
+                { x: '2024-01-01', y: 10 },
+                { x: '2024-01-02', y: 15 },
+                { x: '2024-01-03', y: 12 }
+            ]
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'day'
+                }
+            }
+        }
+    }
+};
+````
+
+See the [Chart.js time scale documentation](https://www.chartjs.org/docs/latest/axes/cartesian/time.html) for more options and formatting details.
 
 ### Additional Plugins via `msg.plugins`
 
