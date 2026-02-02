@@ -44,15 +44,15 @@
 </script>
 
 <script type="text/markdown" data-help-name="chart-image">
-Generate a Chart.js image buffer.
+Generate a chart image buffer using Chart.js.
 
 ### Inputs
 
-: payload (object) : Chart.js configuration containing `type`, `data`, and `options` in `msg.payload`.
-: width (number)   : Optional pixel width override supplied by `msg.width`.
-: height (number)  : Optional pixel height override supplied by `msg.height`.
-: plugins (array)  : Optional custom plugins from `msg.plugins`, registered alongside datalabels and annotation plugins.
-: options.backgroundColor (string) : Optional canvas background color in `msg.payload.options.backgroundColor`. If omitted, `msg.backgroundColour` / `msg.backgroundColor` are used as a fallback.
+: payload (object) : Chart.js configuration object containing `type`, `data`, and `options` in `msg.payload`.
+: width (number) : Optional pixel width override via `msg.width`.
+: height (number) : Optional pixel height override via `msg.height`.
+: plugins (array) : Optional custom plugins from `msg.plugins`, registered in addition to built-in plugins.
+: options.chartBackgroundColor / options.chartBackgroundColour (string) : Optional canvas background color in `msg.payload.options.chartBackgroundColor` or `chartBackgroundColour`. If omitted, the canvas will be transparent.
 
 ### Outputs
 
@@ -61,7 +61,94 @@ Generate a Chart.js image buffer.
 
 ### Details
 
-The node renders a chart from `msg.payload`, applies a default color palette when dataset colors are missing, respects `options.backgroundColor` for the canvas fill, and registers the datalabels plugin when `payload.options.plugins.datalabels.display` is `true`. Provide `msg.width` and `msg.height` to override the configured dimensions.
+- Renders a chart from `msg.payload` using Chart.js.
+- If no `backgroundColor` or `borderColor` is defined for a dataset, a default palette of 32 colors is used (instead of Chart.js default).
+- Canvas size can be overridden by `msg.width` and/or `msg.height`.
+- To set a non-transparent canvas background, use `msg.payload.options.chartBackgroundColor` or `chartBackgroundColour` (both spellings supported).
+- Built-in plugins: Legend, Title, Subtitle, Filler, Decimation.
+- Additional plugins included: `chartjs-plugin-annotation`, `chartjs-plugin-datalabels` (disabled by default).
+- Annotation plugin: add lines, boxes, points, etc. via `options.plugins.annotation`.
+- Datalabels plugin: enabled only if `options.plugins.datalabels.display` is `true` (globally or per dataset).
+- You can add custom plugins at runtime via `msg.plugins` (array of plugin objects).
+
+#### Example: Canvas Background Color
+
+```json
+{
+  "options": {
+    "chartBackgroundColor": "white"
+  }
+}
+```
+
+#### Example: Annotation Plugin
+
+```json
+{
+  "type": "bar",
+  "data": {
+    "labels": ["Jan", "Feb", "Mar"],
+    "datasets": [{
+      "label": "Sales",
+      "data": [12, 19, 15]
+    }]
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "myImportantLine": {
+            "type": "line",
+            "yMin": 15,
+            "yMax": 15,
+            "borderColor": "red",
+            "borderWidth": 2,
+            "scaleID": "y"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### Example: Datalabels Plugin
+
+```json
+{
+  "options": {
+    "plugins": {
+      "datalabels": {
+        "display": true
+      }
+    }
+  }
+}
+```
+
+#### Example: Datalabels Per Dataset
+
+```json
+{
+  "type": "bar",
+  "data": {
+    "labels": ["Jan", "Feb", "Mar"],
+    "datasets": [{
+      "label": "Sales",
+      "data": [12, 19, 15],
+      "datalabels": {
+        "display": true
+      }
+    }]
+  }
+}
+```
+
+#### Example: Add Custom Plugins
+
+```javascript
+msg.plugins = [ myCustomPlugin ]; // Must be an array
+```
 
 ### Examples
 
@@ -132,7 +219,8 @@ Line chart
 
 ### Resources
 
-- [Chart.js documentation](https://www.chartjs.org/docs/latest/)
+- [Chart.js documentation](https://www.chartjs.org/docs/4.4.9/)
 - [chartjs-node-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
 - [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
+- [chartjs-plugin-annotation](https://github.com/chartjs/chartjs-plugin-annotation#readme)
 </script>
