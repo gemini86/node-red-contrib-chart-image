@@ -1,46 +1,51 @@
 <script type="text/javascript">
-    RED.nodes.registerType('chart-image',{
-        category: 'function',
-        color: '#81e3c9',
-        defaults: {
-            name: {value:''},
-			    width: {value: 500},
-    			height: {value: 300}
-        },
-        inputs:1,
-        outputs:1,
-        icon: 'font-awesome/fa-bar-chart-o',
-        label: function() {
-            return this.name || 'chart-image';
-        },
-        labelStyle: function() {
-            return this.name?'node_label_italic':'';
-        },
-        oneditsave: function() {
-            if (this.width === undefined) {
-                $("#node-input-width").val(500);
-            }
-			if (this.height === undefined) {
-                $("#node-input-height").val(300);
-            }
-        }
-    });
+  RED.nodes.registerType('chart-image', {
+    category: 'function',
+    color: '#81e3c9',
+    defaults: {
+      name: { value: '' },
+      width: { value: 500 },
+      height: { value: 300 },
+      debug: { value: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-bar-chart-o',
+    label: function () {
+      return this.name || 'chart-image';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    oneditsave: function () {
+      if (this.width === undefined) {
+        $("#node-input-width").val(500);
+      }
+      if (this.height === undefined) {
+        $("#node-input-height").val(300);
+      }
+    }
+  });
 
 </script>
 
 <script type="text/html" data-template-name="chart-image">
-    <div class="form-row">
-        <label for="node-input-width" style="width:120px;"><i class="fa fa-arrows-h"></i> Chart Width</label>
-        <input type="number" id="node-input-width" placeholder="500" style="width:70%;">
-    </div>
-    <div class="form-row">
-        <label for="node-input-height" style="width:120px;"><i class="fa fa-arrows-v"></i> Chart Height</label>
-        <input type="number" id="node-input-height" placeholder="300" style="width:70%;">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name" style="width:120px;"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
+  <div class="form-row">
+    <label for="node-input-width" style="width:120px;"><i class="fa fa-arrows-h"></i> Chart Width</label>
+    <input type="number" id="node-input-width" placeholder="500" style="width:70%;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-height" style="width:120px;"><i class="fa fa-arrows-v"></i> Chart Height</label>
+    <input type="number" id="node-input-height" placeholder="300" style="width:70%;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name" style="width:120px;"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-debug" style="width:120px;"><i class="fa fa-bug"></i> Debug</label>
+    <input type="checkbox" id="node-input-debug" style="width:auto; vertical-align:middle;"> Enable debug logging
+  </div>
 </script>
 
 <script type="text/markdown" data-help-name="chart-image">
@@ -88,8 +93,8 @@ See the [Chart.js time scale documentation](https://www.chartjs.org/docs/latest/
 ### Inputs
 
 : payload (object) : Chart.js configuration object containing `type`, `data`, and `options` in `msg.payload`.
-: width (number) : Optional pixel width override via `msg.width`.
-: height (number) : Optional pixel height override via `msg.height`.
+: width (number) : Optional Pixel width override via `msg.width`.
+: height (number) : Optional Pixel height override via `msg.height`.
 : plugins (array) : Optional custom plugins from `msg.plugins`, registered in addition to built-in plugins.
 : options.chartBackgroundColor / options.chartBackgroundColour (string) : Optional canvas background color in `msg.payload.options.chartBackgroundColor` or `chartBackgroundColour`. If omitted, the canvas will be transparent.
 
@@ -97,6 +102,19 @@ See the [Chart.js time scale documentation](https://www.chartjs.org/docs/latest/
 
 1. Chart image
 : payload (buffer) : Image buffer rendered from the Chart.js configuration.
+
+### Debug Option
+
+You can enable debug logging by checking the **Debug** box in the node configuration panel, or by setting `msg.debug = true` at runtime. When enabled, the node will emit `node.warn()` messages to the Node-RED debug sidebar, providing information about:
+
+- Which width/height values are being used (and if defaults are applied)
+- When a default or fallback is used for options
+- When chart options are missing or incompatible (e.g., missing `type`, `data`, or using `responsive: true`)
+- When custom plugins are added
+- When the chart image is successfully generated
+
+This is useful for troubleshooting chart rendering and configuration issues. Debug logging is off by default.
+
 
 ### Details
 
