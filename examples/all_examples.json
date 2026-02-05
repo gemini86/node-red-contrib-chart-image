@@ -1,0 +1,423 @@
+[
+    {
+        "id": "df36d1113fdcc60e",
+        "type": "tab",
+        "label": "chart-image examples",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "86a444451faf939a",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "time series example",
+        "func": "function getY(min = 1, max = 30) {\n    min = Math.ceil(min);\n    max = Math.floor(max);\n    return Math.floor(Math.random() * (max - min + 1)) + min;\n}\n\nmsg.payload = {\n    type: \"line\",\n    data: {\n        datasets: [\n            {\n                label: \"Flow Rate\",\n                borderColor: \"rgb(54, 162, 235)\",\n                backgroundColor: \"rgba(54, 162, 235, 0.2)\",\n                tension: 0.3,\n                pointRadius: 3,\n                data: [\n                    { x: \"2026-01-26T09:00:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:05:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:10:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:15:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:20:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:25:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:30:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:35:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:40:00Z\", y: getY() },\n                    { x: \"2026-01-26T09:45:00Z\", y: getY() }\n                ]\n            }\n        ]\n    },\n    options: {\n        scales: {\n            x: {\n                type: \"time\",\n                time: {\n                    unit: \"minute\",\n                    displayFormats: {\n                        minute: \"HH:mm\"\n                    },\n                    tooltipFormat: \"HH:mm\"\n                },\n                ticks: {\n                    source: \"data\"\n                },\n                title: {\n                    display: true,\n                    text: \"Time (HH:mm)\"\n                }\n            },\n            y: {\n                title: {\n                    display: true,\n                    text: \"Value\"\n                }\n            }\n        },\n        plugins: {\n            legend: {\n                display: true\n            }\n        }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 260,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "ab4b3ef384714e6d",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/pie-chart.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 300,
+        "wires": [
+            [
+                "a8f38ff5f0539bae"
+            ]
+        ]
+    },
+    {
+        "id": "a62d4d091a2bc7e3",
+        "type": "http response",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "content-type": "image/png"
+        },
+        "x": 1060,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "72727b941496bdbe",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "Horizontal example",
+        "func": "const labels = [\n    'Jan',\n    'Feb',\n    'Mar',\n    'Apr',\n    'May',\n    'Jun',\n    'Jul'\n];\nconst data = {\n    labels: labels,\n    datasets: [{\n        label: 'My First Dataset',\n        data: [65, 59, 80, 81, 56, 55, 40],\n        fill: false,\n        backgroundColor: [\n            'rgba(255, 99, 132, 0.2)',\n            'rgba(255, 159, 64, 0.2)',\n            'rgba(255, 205, 86, 0.2)',\n            'rgba(75, 192, 192, 0.2)',\n            'rgba(54, 162, 235, 0.2)',\n            'rgba(153, 102, 255, 0.2)',\n            'rgba(114, 115, 113, 0.8)'\n        ],\n        borderColor: [\n            'rgb(255, 99, 132)',\n            'rgb(255, 159, 64)',\n            'rgb(255, 205, 86)',\n            'rgb(75, 192, 192)',\n            'rgb(54, 162, 235)',\n            'rgb(153, 102, 255)',\n            'rgb(153, 102, 255)'\n        ],\n        borderWidth: 1\n    }]\n};\n\nconst options = {\n    indexAxis: 'y',\n    plugins: {\n        legend: {\n            display: false\n        },\n        datalabels: {\n            anchor: 'end',\n            align: 'start',\n            font: {\n                size: 28\n            }\n        }\n    },\n    scales: {\n        x: [{\n            grid: {\n                offset: true,\n                //beginAtZero: true\n            },\n            min: 2,\n        }]\n    }\n};\n\nvar myChart = {\n    type: 'bar',\n    options: options,\n    data: data\n\n};\n\nmsg.payload = myChart;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 220,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "a8f38ff5f0539bae",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "pie example",
+        "func": "msg.payload = {\n    type: \"pie\",\n    data: {\n        labels: [\"A\", \"B\"],\n        datasets: [\n            {\n                label: \"One\",\n                data: [12, 7]\n            },\n            {\n                label: \"Two\",\n                data: [8, 6]\n            }\n        ]\n    },\n    options: {\n        plugins: {\n            datalabels: {\n                display: true,\n                backgroundColor: 'white',\n                padding: 12,\n                borderRadius: 12,\n                font: {\n                    size: 36\n                }\n            },\n            legend: {\n                display: true,\n                position: 'top'\n            }\n        }\n    }\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "3d621490f4397483",
+        "type": "chart-image",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "width": "1000",
+        "height": "1000",
+        "x": 890,
+        "y": 300,
+        "wires": [
+            [
+                "a62d4d091a2bc7e3"
+            ]
+        ]
+    },
+    {
+        "id": "2697168b0e1c6bc2",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/line-chart.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 260,
+        "wires": [
+            [
+                "86a444451faf939a"
+            ]
+        ]
+    },
+    {
+        "id": "db18b678ec599676",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/bar-chart.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 220,
+        "wires": [
+            [
+                "72727b941496bdbe"
+            ]
+        ]
+    },
+    {
+        "id": "fb8a62c1489fedae",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "title plugin",
+        "func": "// Title plugin test (static)\nmsg.width = 900;\nmsg.height = 420;\n\nmsg.payload = {\n    type: 'bar',\n    data: {\n        labels: ['A', 'B', 'C', 'D', 'E'],\n        datasets: [{\n            label: 'Title test',\n            data: [12, 19, 7, 15, 10],\n        }]\n    },\n    options: {\n        chartBackgroundColor: 'white',\n        plugins: {\n            title: {\n                display: true,\n                text: 'TITLE: Chart.js core plugin',\n                font: { size: 22 },\n                padding: { top: 8, bottom: 16 }\n            },\n            legend: false\n        },\n        scales: {\n            y: { beginAtZero: true }\n        }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 340,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "b2867f0b7e708343",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/title-plugin.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 340,
+        "wires": [
+            [
+                "fb8a62c1489fedae"
+            ]
+        ]
+    },
+    {
+        "id": "709eef5a12614e76",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/subtitle-plugin.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 220,
+        "y": 380,
+        "wires": [
+            [
+                "59bbb528ebea5f85"
+            ]
+        ]
+    },
+    {
+        "id": "59bbb528ebea5f85",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "subtitle plugin",
+        "func": "// Subtitle plugin test (static)\nmsg.width = 900;\nmsg.height = 420;\n\nmsg.payload = {\n    type: 'bar',\n    data: {\n        labels: ['A', 'B', 'C', 'D', 'E'],\n        datasets: [{\n            label: 'Subtitle test',\n            data: [5, 9, 3, 12, 6]\n        }]\n    },\n    options: {\n        chartBackgroundColor: 'white',\n        plugins: {\n            title: {\n                display: true,\n                text: 'TITLE: Above the subtitle'\n            },\n            subtitle: {\n                display: true,\n                text: 'SUBTITLE: Below the title'\n            },\n            legend: false\n        },\n        scales: {\n            y: { beginAtZero: true }\n        }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 380,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "a3e5401b81216da0",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/decimation-lttb.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 460,
+        "wires": [
+            [
+                "e3fec22e333858ed"
+            ]
+        ]
+    },
+    {
+        "id": "c16dfc3e60a75827",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "lttb decimation",
+        "func": "msg.width = 1000;\nmsg.height = 450;\n\nconst N = 10000;\nfunction generateData(points = 5000) {\n    const data = [];\n\n    let y = 0;\n    for (let i = 0; i < points; i++) {\n        y += Math.random() - 0.5;\n        data.push({ x: i + 1, y });\n    }\n\n    return data;\n}\n\nmsg.payload = {\n    type: 'line',\n    data: {\n        datasets: [{\n            label: 'Decimation probe',\n            data: generateData(N),\n            pointRadius: 0,\n            borderWidth: 1\n        }]\n    },\n    options: {\n        parsing: false,\n        plugins: {\n            title: { display: true, text: 'Decimation probe (should drop length if active)' },\n            decimation: {\n                enabled: true,\n                algorithm: 'lttb',\n                threshold: 1000,\n                samples: 250\n            },\n        },\n        scales: { x: { type: 'linear' } }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 460,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "e3fec22e333858ed",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "point probe plugin",
+        "func": "// This plugin counts the data points before and after data decimation\n\nconst probePlugin = {\n    id: 'probePointCount',\n    afterDatasetsDraw(chart) {\n        const ds = chart.data?.datasets?.[0];\n        const len = ds?.data?.length ?? 0;\n        const origLen = ds?._data?.length; // decimation plugin stores original here if it ran\n\n        const ctx = chart.ctx;\n        ctx.save();\n        ctx.font = '12px sans-serif';\n        ctx.textBaseline = 'top';\n\n        // draw a white-ish background box for readability\n        const text1 = `data.length: ${origLen ?? 'n/a'}`;\n        const text2 = `after decimation: ${len}`;\n        const pad = 6;\n        const w = Math.max(ctx.measureText(text1).width, ctx.measureText(text2).width) + pad * 2;\n        const h = 16 * 2 + pad * 3;\n\n        ctx.fillStyle = 'rgba(255,255,255,0.85)';\n        ctx.fillRect(10, 10, w, h);\n\n        ctx.fillStyle = '#111';\n        ctx.fillText(text1, 10 + pad, 10 + pad);\n        ctx.fillText(text2, 10 + pad, 10 + pad + 16 + pad);\n\n        ctx.restore();\n    }\n};\n\nmsg.plugins = [probePlugin];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 460,
+        "wires": [
+            [
+                "c16dfc3e60a75827"
+            ]
+        ]
+    },
+    {
+        "id": "4942896e4613cbe3",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "filler plugin",
+        "func": "// Filler plugin test (static)\n// Area fill is driven by dataset.fill and the filler plugin. :contentReference[oaicite:7]{index=7}\nmsg.width = 900;\nmsg.height = 420;\n\nmsg.payload = {\n    type: 'line',\n    data: {\n        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],\n        datasets: [{\n            label: 'Filler test (fill: true)',\n            data: [12, 19, 7, 15, 10, 14, 9],\n            fill: true,             // equivalent to 'origin' :contentReference[oaicite:8]{index=8}\n            borderWidth: 2,\n            pointRadius: 3\n            // note: your node will apply a palette if colors are omitted :contentReference[oaicite:9]{index=9}\n        }]\n    },\n    options: {\n        chartBackgroundColor: 'white',\n        plugins: {\n            title: { display: true, text: 'Filler plugin (area chart via fill)' },\n            subtitle: { display: true, text: \"fill:true → fill:'origin' (default behavior)\" },\n            legend: { display: true },\n            \n        },\n        scales: {\n            y: { beginAtZero: true }\n        }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 420,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    },
+    {
+        "id": "e7792b8231a002f4",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/filler-plugin.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 230,
+        "y": 420,
+        "wires": [
+            [
+                "4942896e4613cbe3"
+            ]
+        ]
+    },
+    {
+        "id": "7996639de40fb26f",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "point probe plugin",
+        "func": "// This plugin counts the data points before and after data decimation\n\nconst probePlugin = {\n    id: 'probePointCount',\n    afterDatasetsDraw(chart) {\n        const ds = chart.data?.datasets?.[0];\n        const len = ds?.data?.length ?? 0;\n        const origLen = ds?._data?.length; // decimation plugin stores original here if it ran\n\n        const ctx = chart.ctx;\n        ctx.save();\n        ctx.font = '12px sans-serif';\n        ctx.textBaseline = 'top';\n\n        // draw a white-ish background box for readability\n        const text1 = `data.length: ${origLen ?? 'n/a'}`;\n        const text2 = `after decimation: ${len}`;\n        const pad = 6;\n        const w = Math.max(ctx.measureText(text1).width, ctx.measureText(text2).width) + pad * 2;\n        const h = 16 * 2 + pad * 3;\n\n        ctx.fillStyle = 'rgba(255,255,255,0.85)';\n        ctx.fillRect(10, 10, w, h);\n\n        ctx.fillStyle = '#111';\n        ctx.fillText(text1, 10 + pad, 10 + pad);\n        ctx.fillText(text2, 10 + pad, 10 + pad + 16 + pad);\n\n        ctx.restore();\n    }\n};\n\nmsg.plugins = [probePlugin];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 500,
+        "wires": [
+            [
+                "12e27107eb5265fa"
+            ]
+        ]
+    },
+    {
+        "id": "cec6063a12a9fedd",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/decimation-min-max.png",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 500,
+        "wires": [
+            [
+                "7996639de40fb26f"
+            ]
+        ]
+    },
+    {
+        "id": "0d16b32b8e11e96e",
+        "type": "template",
+        "z": "df36d1113fdcc60e",
+        "name": "example page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\" />\n<title>node-red-contrib-chart-image – Examples</title>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n\n<style>\n  :root {\n    --bg: #ffffff;\n    --fg: #222;\n    --card-bg: #f7f7f7;\n    --border: #ddd;\n  }\n\n  body.dark {\n    --bg: #1e1e1e;\n    --fg: #eaeaea;\n    --card-bg: #2a2a2a;\n    --border: #444;\n    background-image:\n      linear-gradient(45deg, #333 25%, transparent 25%),\n      linear-gradient(-45deg, #333 25%, transparent 25%),\n      linear-gradient(45deg, transparent 75%, #333 75%),\n      linear-gradient(-45deg, transparent 75%, #333 75%);\n    background-size: 20px 20px;\n    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;\n  }\n\n  body {\n    margin: 0;\n    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;\n    background-color: var(--bg);\n    color: var(--fg);\n    transition: background-color 0.2s ease, color 0.2s ease;\n  }\n\n  header {\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    padding: 1rem 1.25rem;\n    border-bottom: 1px solid var(--border);\n    background: var(--bg);\n    position: sticky;\n    top: 0;\n    z-index: 10;\n  }\n\n  header h1 {\n    font-size: 1.1rem;\n    margin: 0;\n    font-weight: 600;\n  }\n\n  button {\n    padding: 0.4rem 0.7rem;\n    font-size: 0.85rem;\n    cursor: pointer;\n    border-radius: 6px;\n    border: 1px solid var(--border);\n    background: var(--card-bg);\n    color: var(--fg);\n  }\n\n  main {\n    padding: 1rem;\n  }\n\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr; /* default: one per line */\n    gap: 1rem;\n  }\n\n  /* only go multi-column on very wide screens */\n  @media (min-width: 1600px) {\n    .grid {\n      grid-template-columns: repeat(2, 1fr);\n    }\n  }\n\n  .card {\n    background: var(--card-bg);\n    border: 1px solid var(--border);\n    border-radius: 10px;\n    padding: 0.75rem;\n    display: flex;\n    flex-direction: column;\n    gap: 0.5rem;\n  }\n\n  .card h2 {\n    font-size: 0.9rem;\n    margin: 0;\n    font-weight: 500;\n  }\n\n  .card img {\n    width: 100%;\n    height: auto;\n    border-radius: 6px;\n    background: transparent;\n  }\n\n  footer {\n    text-align: center;\n    font-size: 0.75rem;\n    opacity: 0.6;\n    padding: 1rem;\n  }\n</style>\n</head>\n\n<body>\n<header>\n  <h1>node-red-contrib-chart-image – Examples</h1>\n  <button id=\"toggleBg\">Toggle background</button>\n</header>\n\n<main>\n  <div class=\"grid\">\n    <div class=\"card\">\n      <h2>/bar-chart.png</h2>\n      <img src=\"/bar-chart.png\" alt=\"Bar chart\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/line-chart.png</h2>\n      <img src=\"/line-chart.png\" alt=\"Line chart\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/pie-chart.png</h2>\n      <img src=\"/pie-chart.png\" alt=\"Pie chart\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/title-plugin.png</h2>\n      <img src=\"/title-plugin.png\" alt=\"Title plugin\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/subtitle-plugin.png</h2>\n      <img src=\"/subtitle-plugin.png\" alt=\"Subtitle plugin\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/filler-plugin.png</h2>\n      <img src=\"/filler-plugin.png\" alt=\"Filler plugin\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/decimation-lttb.png</h2>\n      <img src=\"/decimation-lttb.png\" alt=\"Decimation LTTB\">\n    </div>\n\n    <div class=\"card\">\n      <h2>/decimation-min-max.png</h2>\n      <img src=\"/decimation-min-max.png\" alt=\"Decimation Min-Max\">\n    </div>\n  </div>\n</main>\n\n<footer>\n  Transparent background test • click “Toggle background”\n</footer>\n\n<script>\n  const btn = document.getElementById('toggleBg');\n  btn.addEventListener('click', () => {\n    document.body.classList.toggle('dark');\n  });\n</script>\n</body>\n</html>\n",
+        "output": "str",
+        "x": 440,
+        "y": 160,
+        "wires": [
+            [
+                "0e287fe18644dd69"
+            ]
+        ]
+    },
+    {
+        "id": "81aff3ac0d86c86b",
+        "type": "http in",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "url": "/chart-image-examples.html",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "0d16b32b8e11e96e"
+            ]
+        ]
+    },
+    {
+        "id": "0e287fe18644dd69",
+        "type": "http response",
+        "z": "df36d1113fdcc60e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {
+            "content-type": "text/html"
+        },
+        "x": 620,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "12e27107eb5265fa",
+        "type": "function",
+        "z": "df36d1113fdcc60e",
+        "name": "min-max decimation",
+        "func": "msg.width = 1000;\nmsg.height = 450;\n\nconst N = 10000;\nfunction generateData(points = 5000) {\n    const data = [];\n\n    let y = 0;\n    for (let i = 0; i < points; i++) {\n        y += Math.random() - 0.5;\n        data.push({ x: i + 1, y });\n    }\n\n    return data;\n}\n\nmsg.payload = {\n    type: 'line',\n    data: {\n        datasets: [{\n            label: 'Decimation probe',\n            data: generateData(N),\n            pointRadius: 0,\n            borderWidth: 1\n        }]\n    },\n    options: {\n        parsing: false,\n        plugins: {\n            title: { display: true, text: 'Decimation probe (should drop length if active)' },\n            decimation: {\n                enabled: true,\n                algorithm: 'min-max',\n                threshold: 1000,\n                samples: 250\n            },\n        },\n        scales: { x: { type: 'linear' } }\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 500,
+        "wires": [
+            [
+                "3d621490f4397483"
+            ]
+        ]
+    }
+]

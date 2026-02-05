@@ -1,67 +1,211 @@
 <script type="text/javascript">
-    RED.nodes.registerType('chart-image',{
-        category: 'function',
-        color: '#81e3c9',
-        defaults: {
-            name: {value:''},
-			    width: {value: 500},
-    			height: {value: 300}
-        },
-        inputs:1,
-        outputs:1,
-        icon: 'font-awesome/fa-bar-chart-o',
-        label: function() {
-            return this.name || 'chart-image';
-        },
-        labelStyle: function() {
-            return this.name?'node_label_italic':'';
-        },
-        oneditsave: function() {
-            if (this.width === undefined) {
-                $("#node-input-width").val(500);
-            }
-			if (this.height === undefined) {
-                $("#node-input-height").val(300);
-            }
-        }
-    });
+  RED.nodes.registerType('chart-image', {
+    category: 'function',
+    color: '#81e3c9',
+    defaults: {
+      name: { value: '' },
+      width: { value: 500 },
+      height: { value: 300 },
+      debug: { value: false }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-bar-chart-o',
+    label: function () {
+      return this.name || 'chart-image';
+    },
+    labelStyle: function () {
+      return this.name ? 'node_label_italic' : '';
+    },
+    oneditsave: function () {
+      if (this.width === undefined) {
+        $("#node-input-width").val(500);
+      }
+      if (this.height === undefined) {
+        $("#node-input-height").val(300);
+      }
+    }
+  });
 
 </script>
 
 <script type="text/html" data-template-name="chart-image">
-    <div class="form-row">
-        <label for="node-input-width" style="width:120px;"><i class="fa fa-arrows-h"></i> Chart Width</label>
-        <input type="number" id="node-input-width" placeholder="500" style="width:70%;">
-    </div>
-    <div class="form-row">
-        <label for="node-input-height" style="width:120px;"><i class="fa fa-arrows-v"></i> Chart Height</label>
-        <input type="number" id="node-input-height" placeholder="300" style="width:70%;">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name" style="width:120px;"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
+  <div class="form-row">
+    <label for="node-input-width" style="width:120px;"><i class="fa fa-arrows-h"></i> Chart Width</label>
+    <input type="number" id="node-input-width" placeholder="500" style="width:70%;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-height" style="width:120px;"><i class="fa fa-arrows-v"></i> Chart Height</label>
+    <input type="number" id="node-input-height" placeholder="300" style="width:70%;">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name" style="width:120px;"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-input-debug" style="width:120px;"><i class="fa fa-bug"></i> Debug</label>
+    <input type="checkbox" id="node-input-debug" style="width:auto; vertical-align:middle;"> Enable debug logging
+  </div>
 </script>
 
 <script type="text/markdown" data-help-name="chart-image">
-Generate a Chart.js image buffer.
+
+Generate a chart image buffer using Chart.js.
+
+---
+
+#### Time Series Support
+
+**Time series charts are supported out of the box.** The [chartjs-adapter-moment](https://github.com/chartjs/chartjs-adapter-moment) adapter is included and automatically registered. To use time axes, set your axis `type` to `'time'` in your Chart.js config. No extra install or import is needed.
+
+**Example: Time Series Chart**
+
+```json
+{
+  "type": "line",
+  "data": {
+    "datasets": [
+      {
+        "label": "My Time Series",
+        "data": [
+          { "x": "2024-01-01", "y": 10 },
+          { "x": "2024-01-02", "y": 15 },
+          { "x": "2024-01-03", "y": 12 }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "scales": {
+      "x": {
+        "type": "time",
+        "time": { "unit": "day" }
+      }
+    }
+  }
+}
+```
+
+See the [Chart.js time scale documentation](https://www.chartjs.org/docs/latest/axes/cartesian/time.html) for more options and formatting.
+
+---
 
 ### Inputs
 
-: payload (object) : Chart.js configuration containing `type`, `data`, and `options` in `msg.payload`.
-: width (number)   : Optional pixel width override supplied by `msg.width`.
-: height (number)  : Optional pixel height override supplied by `msg.height`.
-: plugins (array)  : Optional custom plugins from `msg.plugins`, registered alongside datalabels and annotation plugins.
-: options.backgroundColor (string) : Optional canvas background color in `msg.payload.options.backgroundColor`. If omitted, `msg.backgroundColour` / `msg.backgroundColor` are used as a fallback.
+: payload (object) : Chart.js configuration object containing `type`, `data`, and `options` in `msg.payload`.
+: width (number) : Optional Pixel width override via `msg.width`.
+: height (number) : Optional Pixel height override via `msg.height`.
+: plugins (array) : Optional custom plugins from `msg.plugins`, registered in addition to built-in plugins.
+: options.chartBackgroundColor / options.chartBackgroundColour (string) : Optional canvas background color in `msg.payload.options.chartBackgroundColor` or `chartBackgroundColour`. If omitted, the canvas will be transparent.
 
 ### Outputs
 
 1. Chart image
 : payload (buffer) : Image buffer rendered from the Chart.js configuration.
 
+### Debug Option
+
+You can enable debug logging by checking the **Debug** box in the node configuration panel, or by setting `msg.debug = true` at runtime. When enabled, the node will emit `node.warn()` messages to the Node-RED debug sidebar, providing information about:
+
+- Which width/height values are being used (and if defaults are applied)
+- When a default or fallback is used for options
+- When chart options are missing or incompatible (e.g., missing `type`, `data`, or using `responsive: true`)
+- When custom plugins are added
+- When the chart image is successfully generated
+
+This is useful for troubleshooting chart rendering and configuration issues. Debug logging is off by default.
+
+
 ### Details
 
-The node renders a chart from `msg.payload`, applies a default color palette when dataset colors are missing, respects `options.backgroundColor` for the canvas fill, and registers the datalabels plugin when `payload.options.plugins.datalabels.display` is `true`. Provide `msg.width` and `msg.height` to override the configured dimensions.
+- Renders a chart from `msg.payload` using Chart.js.
+- If no `backgroundColor` or `borderColor` is defined for a dataset, a default palette of 32 colors is used (instead of Chart.js default).
+- Canvas size can be overridden by `msg.width` and/or `msg.height`.
+- To set a non-transparent canvas background, use `msg.payload.options.chartBackgroundColor` or `chartBackgroundColour` (both spellings supported).
+- Built-in plugins: Legend, Title, Subtitle, Filler, Decimation.
+- Additional plugins included: `chartjs-plugin-annotation`, `chartjs-plugin-datalabels` (disabled by default).
+- Annotation plugin: add lines, boxes, points, etc. via `options.plugins.annotation`.
+- Datalabels plugin: enabled only if `options.plugins.datalabels.display` is `true` (globally or per dataset).
+- You can add custom plugins at runtime via `msg.plugins` (array of plugin objects).
+
+#### Example: Canvas Background Color
+
+```json
+{
+  "options": {
+    "chartBackgroundColor": "white"
+  }
+}
+```
+
+#### Example: Annotation Plugin
+
+```json
+{
+  "type": "bar",
+  "data": {
+    "labels": ["Jan", "Feb", "Mar"],
+    "datasets": [{
+      "label": "Sales",
+      "data": [12, 19, 15]
+    }]
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "myImportantLine": {
+            "type": "line",
+            "yMin": 15,
+            "yMax": 15,
+            "borderColor": "red",
+            "borderWidth": 2,
+            "scaleID": "y"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### Example: Datalabels Plugin
+
+```json
+{
+  "options": {
+    "plugins": {
+      "datalabels": {
+        "display": true
+      }
+    }
+  }
+}
+```
+
+#### Example: Datalabels Per Dataset
+
+```json
+{
+  "type": "bar",
+  "data": {
+    "labels": ["Jan", "Feb", "Mar"],
+    "datasets": [{
+      "label": "Sales",
+      "data": [12, 19, 15],
+      "datalabels": {
+        "display": true
+      }
+    }]
+  }
+}
+```
+
+#### Example: Add Custom Plugins
+
+```javascript
+msg.plugins = [ myCustomPlugin ]; // Must be an array
+```
 
 ### Examples
 
@@ -132,7 +276,8 @@ Line chart
 
 ### Resources
 
-- [Chart.js documentation](https://www.chartjs.org/docs/latest/)
+- [Chart.js documentation](https://www.chartjs.org/docs/4.4.9/)
 - [chartjs-node-canvas documentation](https://www.npmjs.com/package/chartjs-node-canvas)
 - [chartjs-plugin-datalabels documentation](https://chartjs-plugin-datalabels.netlify.app/guide/)
+- [chartjs-plugin-annotation](https://github.com/chartjs/chartjs-plugin-annotation#readme)
 </script>

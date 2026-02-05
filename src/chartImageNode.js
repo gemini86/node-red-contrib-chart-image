@@ -19,21 +19,31 @@ module.exports = function (RED) {
     node.on('input', async (msg, send, done) => {
       send = send || function () { node.send.apply(node, arguments); };
 
+      // Determine debug mode: config.debug (node config), msg.debug (overrides config)
+      const debug = Boolean(node.debug);
+
       if (!msg || typeof msg.payload !== 'object' || msg.payload === null) {
         node.error('msg.payload must be a Chart.js config object', msg);
         done();
         return;
       }
 
-      const width =
-        Number(msg.width) > 0 ? Number(msg.width) :
-          Number(msg.payload.width) > 0 ? Number(msg.payload.width) :
-            defaultWidth;
+      let width, height;
+      if (Number(msg.width) > 0) {
+        width = Number(msg.width);
+        if (debug) node.warn('[chart-image] Using msg.width: ' + width);
+      } else {
+        width = defaultWidth;
+        if (debug) node.warn('[chart-image] Using width from config: ' + width);
+      }
 
-      const height =
-        Number(msg.height) > 0 ? Number(msg.height) :
-          Number(msg.payload.height) > 0 ? Number(msg.payload.height) :
-            defaultHeight;
+      if (Number(msg.height) > 0) {
+        height = Number(msg.height);
+        if (debug) node.warn('[chart-image] Using msg.height: ' + height);
+      } else {
+        height = defaultHeight;
+        if (debug) node.warn('[chart-image] Using height from config: ' + height);
+      }
 
       let chartConfig;
       try {
@@ -44,35 +54,57 @@ module.exports = function (RED) {
         return;
       }
 
+      // Check for incompatible or missing options
+      if (debug) {
+        if (!chartConfig.type) {
+          node.warn('[chart-image] Chart type is missing in config. This may cause Chart.js to fail.');
+        }
+        if (!chartConfig.data) {
+          node.warn('[chart-image] Chart data is missing in config. This may cause Chart.js to fail.');
+        }
+        if (chartConfig.options && chartConfig.options.responsive === true) {
+          node.warn('[chart-image] options.responsive=true is not supported in image rendering. The canvas size is fixed.');
+        }
+        if (chartConfig.options && chartConfig.options.animation === true) {
+          node.warn('[chart-image] options.animation=true is not supported in image rendering. Animations are disabled.');
+        }
+      }
+
       const mime = (msg.mime || defaultMime).toLowerCase();
 
       try {
         // New renderer per message, plugins managed by chartjs-node-canvas
         // Always include built-in plugins and allow users to add more via msg.plugins
-        const modernPlugins = ['chartjs-plugin-annotation'];
+        const modernPlugins = ['chartjs-plugin-annotation', 'chartjs-adapter-moment'];
         const legacyPlugins = ['chartjs-plugin-datalabels'];
 
         // Support chart background via chartjs-node-canvas convenience plugin
         // Prefer background color from chart config: msg.payload.options.chartBackgroundColor
+        // Default to transparent (no background color passed in to chartjs-node-canvas)
         let backgroundColor;
         try {
           const opt = chartConfig && chartConfig.options;
           if (opt && typeof opt.chartBackgroundColor === 'string' && opt.chartBackgroundColor.length > 0) {
             backgroundColor = opt.chartBackgroundColor;
+            if (debug) node.warn('[chart-image] Using chartBackgroundColor: ' + backgroundColor);
           } else if (opt.chartBackgroundColour && typeof opt.chartBackgroundColour === 'string' && opt.chartBackgroundColour.length > 0) {
             backgroundColor = opt.chartBackgroundColour;
+            if (debug) node.warn('[chart-image] Using chartBackgroundColour: ' + backgroundColor);
+          } else if (debug) {
+            node.warn('[chart-image] No chart background color specified, using transparent.');
           }
         } catch (_) {
-          node.warn('Error reading chart background color from config, using defaults');
+          if (debug) node.warn('[chart-image] Error reading chart background color from config, using defaults');
         }
         try {
           if (chartConfig?.options?.plugins?.datalabels === undefined) {
             // Disable datalabels plugin by default if not explicitly disabled
             RED.util.setObjectProperty(chartConfig, 'options.plugins.datalabels.display', false, true);
+            if (debug) node.warn('[chart-image] Datalabels plugin not specified, disabling by default.');
           }
         } catch (e) {
           node.warn('Error setting default datalabels plugin display option');
-          node.log(e);          
+          node.log(e);
         }
         if (msg.plugins && typeof msg.plugins === 'object') {
           try {
@@ -84,6 +116,7 @@ module.exports = function (RED) {
               // chartjs-node-canvas supports either module names (string) or plugin objects
               if (typeof p === 'string' || typeof p === 'object' || typeof p === 'function') {
                 modernPlugins.push(p);
+                if (debug) node.warn('[chart-image] Added custom plugin: ' + (typeof p === 'string' ? p : '[object]'));
               }
             }
           } catch (e) {
@@ -92,10 +125,14 @@ module.exports = function (RED) {
           }
         }
 
+        if (debug) {
+          node.warn('[chart-image] Rendering chart with width: ' + width + ', height: ' + height + ', mime: ' + mime);
+        }
+
         const chartJSNodeCanvas = new ChartJSNodeCanvas({
           width,
           height,
-          backgroundColour: backgroundColor ?? 'white',
+          backgroundColour: backgroundColor ?? 'transparent',
           plugins: {
             modern: modernPlugins,
             requireLegacy: legacyPlugins,
@@ -108,6 +145,8 @@ module.exports = function (RED) {
         msg.width = width;
         msg.height = height;
         msg.mime = mime;
+
+        if (debug) node.warn('[chart-image] Chart image buffer generated successfully.');
 
         send(msg);
       } catch (err) {
