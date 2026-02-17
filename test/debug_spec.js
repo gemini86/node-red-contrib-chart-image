@@ -53,7 +53,7 @@ describe('chart-image Node - Debug Option', function () {
         });
     });
 
-    it('should emit node.warn() messages when msg.debug is true', function (done) {
+    it('should NOT emit node.warn() messages when debug is disabled in config', function (done) {
         const flow = [
             { id: 'n1', type: 'chart-image', name: 'debug test', width: 400, height: 200, debug: false, wires: [['n2']] },
             { id: 'n2', type: 'helper' }
@@ -73,7 +73,7 @@ describe('chart-image Node - Debug Option', function () {
             n2.on('input', function (msg) {
                 try {
                     expect(Buffer.isBuffer(msg.payload)).to.equal(true);
-                    expect(warnCalled).to.equal(true);
+                    expect(warnCalled).to.equal(false);
                     done();
                 } catch (err) {
                     done(err);
@@ -81,7 +81,6 @@ describe('chart-image Node - Debug Option', function () {
             });
 
             n1.receive({
-                debug: true,
                 payload: {
                     type: 'bar',
                     data: {
