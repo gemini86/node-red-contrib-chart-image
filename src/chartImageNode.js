@@ -20,7 +20,7 @@ module.exports = function (RED) {
       send = send || function () { node.send.apply(node, arguments); };
 
       // Determine debug mode: config.debug (node config), msg.debug (overrides config)
-      const debug = Boolean(node.debug);
+      const debug = Boolean(config.debug);
 
       if (!msg || typeof msg.payload !== 'object' || msg.payload === null) {
         node.error('msg.payload must be a Chart.js config object', msg);
