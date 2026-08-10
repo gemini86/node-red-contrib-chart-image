@@ -62,6 +62,10 @@ describe('chart-image Node', function () {
             const n1 = helper.getNode('n1');
             const n2 = helper.getNode('n2');
 
+            n1.on('call:error', function (msg) {
+                done(new Error(msg.args[0]));
+            });
+
             n2.on('input', function (msg) {
                 try {
                     expect(Buffer.isBuffer(msg.payload)).to.equal(true);
