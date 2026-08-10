@@ -76,7 +76,8 @@ module.exports = function (RED) {
         // New renderer per message, plugins managed by chartjs-node-canvas
         // Always include built-in plugins and allow users to add more via msg.plugins
         const modernPlugins = ['chartjs-plugin-annotation'];
-        const legacyPlugins = ['chartjs-plugin-datalabels', 'chartjs-adapter-moment'];
+        const legacyPlugins = ['chartjs-plugin-datalabels'];
+        const chartJSLegacyPlugins = ['chartjs-adapter-moment'];
 
         // Support chart background via chartjs-node-canvas convenience plugin
         // Prefer background color from chart config: msg.payload.options.chartBackgroundColor
@@ -136,6 +137,7 @@ module.exports = function (RED) {
           plugins: {
             modern: modernPlugins,
             requireLegacy: legacyPlugins,
+            requireChartJSLegacy: chartJSLegacyPlugins,
           }
         });
 
